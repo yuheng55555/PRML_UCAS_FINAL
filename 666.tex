@@ -1,0 +1,760 @@
+
+
+% 若编译失败，且生成 .synctex(busy) 辅助文件，可能有两个原因：
+% 1. 需要插入的图片不存在：Ctrl + F 搜索 'figure' 将这些代码注释/删除掉即可
+% 2. 路径/文件名含中文或空格：更改路径/文件名即可
+
+% ------------------------------------------------------------- %
+% >> ------------------ 文章宏包及相关设置 ------------------ << %
+% 设定文章类型与编码格式
+\documentclass[UTF8]{report}		
+
+% 本文特殊宏包
+\usepackage{siunitx} % 埃米单位
+
+% 本 .tex 专属的宏定义
+    \def\V{\ \mathrm{V}}
+    \def\mV{\ \mathrm{mV}}
+    \def\kV{\ \mathrm{KV}}
+    \def\KV{\ \mathrm{KV}}
+    \def\MV{\ \mathrm{MV}}
+    \def\A{\ \mathrm{A}}
+    \def\mA{\ \mathrm{mA}}
+    \def\kA{\ \mathrm{KA}}
+    \def\KA{\ \mathrm{KA}}
+    \def\MA{\ \mathrm{MA}}
+    \def\O{\ \Omega}
+    \def\mO{\ \Omega}
+    \def\kO{\ \mathrm{K}\Omega}
+    \def\KO{\ \mathrm{K}\Omega}
+    \def\MO{\ \mathrm{M}\Omega}
+    \def\Hz{\ \mathrm{Hz}}
+
+% 自定义宏定义
+    \def\N{\mathbb{N}}
+    \def\F{\mathbb{F}}
+    \def\Z{\mathbb{Z}}
+    \def\Q{\mathbb{Q}}
+    \def\R{\mathbb{R}}
+    \def\C{\mathbb{C}}
+    \def\T{\mathbb{T}}
+    \def\S{\mathbb{S}}
+    \def\A{\mathbb{A}}
+    \def\I{\mathscr{I}}
+    \def\Im{\mathrm{Im\,}}
+    \def\Re{\mathrm{Re\,}}
+    \def\d{\mathrm{d}}
+    \def\p{\partial}
+
+% 导入基本宏包
+    \usepackage[UTF8]{ctex}     % 设置文档为中文语言
+    \usepackage[colorlinks, linkcolor=blue, anchorcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}  % 宏包：自动生成超链接 (此宏包与标题中的数学环境冲突)
+    % \usepackage{hyperref}  % 宏包：自动生成超链接 (此宏包与标题中的数学环境冲突)
+    % \hypersetup{
+    %     colorlinks=true,    % false:边框链接 ; true:彩色链接
+    %     citecolor={blue},    % 文献引用颜色
+    %     linkcolor={blue},   % 目录 (我们在目录处单独设置)，公式，图表，脚注等内部链接颜色
+    %     urlcolor={orange},    % 网页 URL 链接颜色，包括 \href 中的 text
+    %     % cyan 浅蓝色 
+    %     % magenta 洋红色
+    %     % yellow 黄色
+    %     % black 黑色
+    %     % white 白色
+    %     % red 红色
+    %     % green 绿色
+    %     % blue 蓝色
+    %     % gray 灰色
+    %     % darkgray 深灰色
+    %     % lightgray 浅灰色
+    %     % brown 棕色
+    %     % lime 石灰色
+    %     % olive 橄榄色
+    %     % orange 橙色
+    %     % pink 粉红色
+    %     % purple 紫色
+    %     % teal 蓝绿色
+    %     % violet 紫罗兰色
+    % }
+
+    % \usepackage{docmute}    % 宏包：子文件导入时自动去除导言区，用于主/子文件的写作方式，\include{./51单片机笔记}即可。注：启用此宏包会导致.tex文件capacity受限。
+    \usepackage{amsmath}    % 宏包：数学公式
+    \usepackage{mathrsfs}   % 宏包：提供更多数学符号
+    \usepackage{amssymb}    % 宏包：提供更多数学符号
+    \usepackage{pifont}     % 宏包：提供了特殊符号和字体
+    \usepackage{extarrows}  % 宏包：更多箭头符号
+    \usepackage{multicol}   % 宏包：支持多栏 
+    \usepackage{graphicx}   % 宏包：插入图片
+    \usepackage{float}      % 宏包：设置图片浮动位置
+    %\usepackage{article}    % 宏包：使文本排版更加优美
+    \usepackage{tikz}       % 宏包：绘图工具
+    %\usepackage{pgfplots}   % 宏包：绘图工具
+    \usepackage{enumerate}  % 宏包：列表环境设置
+    \usepackage{enumitem}   % 宏包：列表环境设置
+
+% 文章页面margin设置
+    \usepackage[a4paper]{geometry}
+        \geometry{top=1in}
+        \geometry{bottom=1in}
+        \geometry{left=0.75in}
+        \geometry{right=0.75in}   % 设置上下左右页边距
+        \geometry{marginparwidth=1.75cm}    % 设置边注距离（注释、标记等）
+
+% 定义 solution 环境
+\usepackage{amsthm}
+\newtheorem{solution}{Solution}
+        \geometry{bottom=1in}
+        \geometry{left=0.75in}
+        \geometry{right=0.75in}   % 设置上下左右页边距
+        \geometry{marginparwidth=1.75cm}    % 设置边注距离（注释、标记等）
+
+% 配置数学环境
+    \usepackage{amsthm} % 宏包：数学环境配置
+    % theorem-line 环境自定义
+        \newtheoremstyle{MyLineTheoremStyle}% <name>
+            {11pt}% <space above>
+            {11pt}% <space below>
+            {}% <body font> 使用默认正文字体
+            {}% <indent amount>
+            {\bfseries}% <theorem head font> 设置标题项为加粗
+            {：}% <punctuation after theorem head>
+            {.5em}% <space after theorem head>
+            {\textbf{#1}\thmnumber{#2}\ \ (\,\textbf{#3}\,)}% 设置标题内容顺序
+        \theoremstyle{MyLineTheoremStyle} % 应用自定义的定理样式
+        \newtheorem{LineTheorem}{Theorem.\,}
+    % theorem-block 环境自定义
+        \newtheoremstyle{MyBlockTheoremStyle}% <name>
+            {11pt}% <space above>
+            {11pt}% <space below>
+            {}% <body font> 使用默认正文字体
+            {}% <indent amount>
+            {\bfseries}% <theorem head font> 设置标题项为加粗
+            {：\\ \indent}% <punctuation after theorem head>
+            {.5em}% <space after theorem head>
+            {\textbf{#1}\thmnumber{#2}\ \ (\,\textbf{#3}\,)}% 设置标题内容顺序
+        \theoremstyle{MyBlockTheoremStyle} % 应用自定义的定理样式
+        \newtheorem{BlockTheorem}[LineTheorem]{Theorem.\,} % 使用 LineTheorem 的计数器
+    % definition 环境自定义
+        \newtheoremstyle{MySubsubsectionStyle}% <name>
+            {11pt}% <space above>
+            {11pt}% <space below>
+            {}% <body font> 使用默认正文字体
+            {}% <indent amount>
+            {\bfseries}% <theorem head font> 设置标题项为加粗
+           % {：\\ \indent}% <punctuation after theorem head>
+            {\\\indent}
+            {0pt}% <space after theorem head>
+            {\textbf{#3}}% 设置标题内容顺序
+        \theoremstyle{MySubsubsectionStyle} % 应用自定义的定理样式
+        \newtheorem{definition}{}
+
+%宏包：有色文本框（proof环境）及其设置
+    \usepackage[dvipsnames,svgnames]{xcolor}    %设置插入的文本框颜色
+    \usepackage[strict]{changepage}     % 提供一个 adjustwidth 环境
+    \usepackage{framed}     % 实现方框效果
+        \definecolor{graybox_color}{rgb}{0.95,0.95,0.96} % 文本框颜色。修改此行中的 rgb 数值即可改变方框纹颜色，具体颜色的rgb数值可以在网站https://colordrop.io/ 中获得。（截止目前的尝试还没有成功过，感觉单位不一样）（找到喜欢的颜色，点击下方的小眼睛，找到rgb值，复制修改即可）
+        \newenvironment{graybox}{%
+        \def\FrameCommand{%
+        \hspace{1pt}%
+        {\color{gray}\small \vrule width 2pt}%
+        {\color{graybox_color}\vrule width 4pt}%
+        \colorbox{graybox_color}%
+        }%
+        \MakeFramed{\advance\hsize-\width\FrameRestore}%
+        \noindent\hspace{-4.55pt}% disable indenting first paragraph
+        \begin{adjustwidth}{}{7pt}%
+        \vspace{2pt}\vspace{2pt}%
+        }
+        {%
+        \vspace{2pt}\end{adjustwidth}\endMakeFramed%
+        }
+
+
+
+% 外源代码插入设置
+    % matlab 代码插入设置
+    \usepackage{matlab-prettifier}
+        \lstset{style=Matlab-editor}    % 继承 matlab 代码高亮 , 此行不能删去
+    \usepackage[most]{tcolorbox} % 引入tcolorbox包 
+    \usepackage{listings} % 引入listings包
+        \tcbuselibrary{listings, skins, breakable}
+        \newfontfamily\codefont{Consolas} % 定义需要的 codefont 字体
+        \lstdefinestyle{MatlabStyle_inc}{   % 插入代码的样式
+            language=Matlab,
+            basicstyle=\small\ttfamily\codefont,    % ttfamily 确保等宽 
+            breakatwhitespace=false,
+            breaklines=true,
+            captionpos=b,
+            keepspaces=true,
+            numbers=left,
+            numbersep=15pt,
+            showspaces=false,
+            showstringspaces=false,
+            showtabs=false,
+            tabsize=2,
+            xleftmargin=15pt,   % 左边距
+            %frame=single, % single 为包围式单线框
+            frame=shadowbox,    % shadowbox 为带阴影包围式单线框效果
+            %escapeinside=``,   % 允许在代码块中使用 LaTeX 命令 (此行无用)
+            %frameround=tttt,    % tttt 表示四个角都是圆角
+            framextopmargin=0pt,    % 边框上边距
+            framexbottommargin=0pt, % 边框下边距
+            framexleftmargin=5pt,   % 边框左边距
+            framexrightmargin=5pt,  % 边框右边距
+            rulesepcolor=\color{red!20!green!20!blue!20}, % 阴影框颜色设置
+            %backgroundcolor=\color{blue!10}, % 背景颜色
+        }
+        \lstdefinestyle{MatlabStyle_src}{   % 插入代码的样式
+            language=Matlab,
+            basicstyle=\small\ttfamily\codefont,    % ttfamily 确保等宽 
+            breakatwhitespace=false,
+            breaklines=true,
+            captionpos=b,
+            keepspaces=true,
+            numbers=left,
+            numbersep=15pt,
+            showspaces=false,
+            showstringspaces=false,
+            showtabs=false,
+            tabsize=2,
+        }
+        \newtcblisting{matlablisting}{
+            %arc=2pt,        % 圆角半径
+            % 调整代码在 listing 中的位置以和引入文件时的格式相同
+            top=0pt,
+            bottom=0pt,
+            left=-5pt,
+            right=-5pt,
+            listing only,   % 此句不能删去
+            listing style=MatlabStyle_src,
+            breakable,
+            colback=white,   % 选一个合适的颜色
+            colframe=black!0,   % 感叹号后跟不透明度 (为 0 时完全透明)
+        }
+        \lstset{
+            style=MatlabStyle_inc,
+        }
+
+
+
+% table 支持
+    \usepackage{booktabs}   % 宏包：三线表
+    %\usepackage{tabularray} % 宏包：表格排版
+    %\usepackage{longtable}  % 宏包：长表格
+    %\usepackage[longtable]{multirow} % 宏包：multi 行列
+
+
+% figure 设置
+\usepackage{graphicx}   % 支持 jpg, png, eps, pdf 图片 
+\usepackage{float}      % 支持 H 选项
+\usepackage{svg}        % 支持 svg 图片
+\usepackage{subcaption} % 支持子图
+\svgsetup{
+        % 指向 inkscape.exe 的路径
+       inkscapeexe = C:/aa_MySame/inkscape/bin/inkscape.exe, 
+        % 一定程度上修复导入后图片文字溢出几何图形的问题
+       inkscapelatex = false                 
+   }
+
+% 图表进阶设置
+    \usepackage{caption}    % 图注、表注
+        \captionsetup[figure]{name=图}  
+        \captionsetup[table]{name=表}
+        \captionsetup{
+            labelfont=bf, % 设置标签为粗体
+            textfont=bf,  % 设置文本为粗体
+            font=small  
+        }
+    \usepackage{float}     % 图表位置浮动设置 
+        % \floatstyle{plaintop} % 设置表格标题在表格上方
+        % \restylefloat{table}  % 应用设置
+
+
+% 圆圈序号自定义
+    \newcommand*\circled[1]{\tikz[baseline=(char.base)]{\node[shape=circle,draw,inner sep=0.8pt, line width = 0.03em] (char) {\small \bfseries #1};}}   % TikZ solution
+
+
+% 列表设置
+    \usepackage{enumitem}   % 宏包：列表环境设置
+        \setlist[enumerate]{
+            label=\bfseries(\arabic*) ,   % 设置序号样式为加粗的 (1) (2) (3)
+            ref=\arabic*, % 如果需要引用列表项，这将决定引用格式（这里仍然使用数字）
+            itemsep=0pt, parsep=0pt, topsep=0pt, partopsep=0pt, leftmargin=3.5em} 
+        \setlist[itemize]{itemsep=0pt, parsep=0pt, topsep=0pt, partopsep=0pt, leftmargin=3.5em}
+        \newlist{circledenum}{enumerate}{1} % 创建一个新的枚举环境  
+        \setlist[circledenum,1]{  
+            label=\protect\circled{\arabic*}, % 使用 \arabic* 来获取当前枚举计数器的值，并用 \circled 包装它  
+            ref=\arabic*, % 如果需要引用列表项，这将决定引用格式（这里仍然使用数字）
+            itemsep=0pt, parsep=0pt, topsep=0pt, partopsep=0pt, leftmargin=3.5em
+        }  
+
+% 文章默认字体设置
+    \usepackage{fontspec}   % 宏包：字体设置
+        \setmainfont{STKaiti}    % 设置中文字体为宋体字体
+        \setCJKmainfont[AutoFakeBold=3]{STKaiti} % 设置加粗字体为 STKaiti 族，AutoFakeBold 可以调整字体粗细
+        \setmainfont{Times New Roman} % 设置英文字体为Times New Roman
+
+
+% 其它设置
+    % 脚注设置
+    \renewcommand\thefootnote{\ding{\numexpr171+\value{footnote}}}
+    % 参考文献引用设置
+        \bibliographystyle{unsrt}   % 设置参考文献引用格式为unsrt
+        \newcommand{\upcite}[1]{\textsuperscript{\cite{#1}}}     % 自定义上角标式引用
+    % 文章序言设置
+        \newcommand{\cnabstractname}{序言}
+        \newenvironment{cnabstract}{%
+            \par\Large
+            \noindent\mbox{}\hfill{\bfseries \cnabstractname}\hfill\mbox{}\par
+            \vskip 2.5ex
+            }{\par\vskip 2.5ex}
+
+
+% 各级标题自定义设置
+    \usepackage{titlesec}   
+    % chapter
+        \titleformat{\chapter}[hang]{\normalfont\Large\bfseries\centering}{Homework \thechapter }{10pt}{}
+        \titlespacing*{\chapter}{0pt}{-30pt}{10pt} % 控制上方空白的大小
+    % section
+        \titleformat{\section}[hang]{\normalfont\large\bfseries}{\thesection}{8pt}{}
+    % subsection
+        %\titleformat{\subsubsection}[hang]{\normalfont\bfseries}{}{8pt}{}
+    % subsubsection
+        %\titleformat{\subsubsection}[hang]{\normalfont\bfseries}{}{8pt}{}
+
+
+% >> ------------------ 文章宏包及相关设置 ------------------ << %
+% ------------------------------------------------------------- %
+
+
+
+% ----------------------------------------------------------- %
+% >> --------------------- 文章信息区 --------------------- << %
+% 页眉页脚设置
+
+\usepackage{fancyhdr}   %宏包：页眉页脚设置
+    \pagestyle{fancy}
+    \fancyhf{}
+    \cfoot{\thepage}
+    \renewcommand\headrulewidth{1pt}
+    \renewcommand\footrulewidth{0pt}
+    \chead{模式识别与机器学习作业,\ 尹超,\ 2023K8009926003}
+    \lhead{Homework}
+    \rhead{yinchao23@mails.ucas.ac.cn}
+
+%文档信息设置
+\title{模式识别与机器学习作业\\ PRML Homework}
+\author{尹超\\ \footnotesize 中国科学院大学，北京 10004 \\ \footnotesize University of Chinese Academy of Sciences, Beijing 100049, China}
+\date{\footnotesize 2024.8 -- 2025.1}
+% >> --------------------- 文章信息区 --------------------- << %
+% ----------------------------------------------------------- %     
+
+
+% 开始编辑文章
+
+\begin{document}
+\zihao{5}           % 设置全文字号大小
+
+% --------------------------------------------------------------- %
+% >> --------------------- 封面序言与目录 --------------------- << %
+% 封面
+    \maketitle\newpage  
+    \pagenumbering{Roman} % 页码为大写罗马数字
+    \thispagestyle{fancy}   % 显示页码、页眉等
+
+% 序言
+    \begin{cnabstract}\normalsize 
+        本文为笔者模式识别与机器学习的作业。\par
+        望老师批评指正。
+    \end{cnabstract}
+    \addcontentsline{toc}{chapter}{序言} % 手动添加为目录
+
+% % 不换页目录
+%     \setcounter{tocdepth}{0}
+%     \noindent\rule{\textwidth}{0.1em}   % 分割线
+%     \noindent\begin{minipage}{\textwidth}\centering 
+%         \vspace{1cm}
+%         \tableofcontents\thispagestyle{fancy}   % 显示页码、页眉等   
+%     \end{minipage}  
+%     \addcontentsline{toc}{chapter}{目录} % 手动添加为目录
+
+% 目录
+\setcounter{tocdepth}{4}                % 目录深度（为1时显示到section）
+\tableofcontents                        % 目录页
+\addcontentsline{toc}{chapter}{目录}    % 手动添加此页为目录
+\thispagestyle{fancy}                   % 显示页码、页眉等 
+
+% 收尾工作
+    \newpage    
+    \pagenumbering{arabic} 
+
+% >> --------------------- 封面序言与目录 --------------------- << %
+% --------------------------------------------------------------- %
+
+
+\chapter{分类与估计问题的解答}
+
+
+\section{问题1：贝叶斯分类与风险决策}
+
+\subsection{问题描述}
+对于 \( c \) 类分类问题，假设各类先验概率为 \( P(\omega_i), i=1,\ldots,c \)，类条件概率密度为 \( p(\mathbf{x} \mid \omega_i), i=1,\ldots,c \)（\(\mathbf{x}\) 为样本特征向量），将第 \( j \) 类样本误判为第 \( i \) 类的风险为 \( \lambda_{ij} \)。  
+\begin{enumerate}
+    \item[(1)] 写出贝叶斯最小错误率决策和最小风险决策的决策规则。
+    \item[(2)] 引入拒识选项（第 \( c+1 \) 类）。假设正确分类风险 \( \lambda(\alpha_i \mid \omega_j) = 0 (i=j) \)；错误分类风险 \( \lambda(\alpha_i \mid \omega_j) = \lambda_s (i \neq j) \)；拒识风险 \( \lambda(\alpha_i \mid \omega_j) = \lambda_r (i = c+1) \)。写出带拒识的最小风险决策规则。
+    \item[(3)] 说明拒识的意义。
+\end{enumerate}
+
+\subsection{解答}
+\begin{itemize}
+    \item[(1)] \textbf{决策规则}
+    \begin{itemize}
+        \item \textbf{贝叶斯最小错误率决策}：  
+        对样本 \(\mathbf{x}\)，选择最大化后验概率的类别：  
+        \[
+        \hat{\omega} = \arg\max_{\omega_i} P(\omega_i \mid \mathbf{x}) = \arg\max_{\omega_i} p(\mathbf{x} \mid \omega_i) P(\omega_i)
+        \]
+        \item \textbf{最小风险决策}：  
+        选择最小化期望风险的类别：  
+        \[
+        \hat{\omega} = \arg\min_{\omega_i} \sum_{j=1}^c \lambda_{ij} P(\omega_j \mid \mathbf{x})
+        \]
+    \end{itemize}
+    \item[(2)] \textbf{带拒识的最小风险决策}  
+    拒识为 \(\alpha_{c+1}\)。分类风险：  
+    \[
+    R(\alpha_i \mid \mathbf{x}) = \lambda_s (1 - P(\omega_i \mid \mathbf{x})), \quad i=1,\ldots,c
+    \]  
+    拒识风险：  
+    \[
+    R(\alpha_{c+1} \mid \mathbf{x}) = \lambda_r
+    \]  
+    决策规则：  
+    \[
+    \hat{\alpha} = \arg\min_{\alpha_k} R(\alpha_k \mid \mathbf{x}), \quad k = 1, \ldots, c+1
+    \]  
+    若 \( P(\omega_i \mid \mathbf{x}) > 1 - \frac{\lambda_r}{\lambda_s} \)，分类为 \(\omega_i\)；否则拒识。
+    \item[(3)] \textbf{拒识的意义}  
+    拒识允许分类器在不确定性高时避免决策，降低误分类风险。例如，在医疗诊断中，拒识可避免错误治疗。
+\end{itemize}
+
+\section{问题2：高斯分布下的分类}
+
+\subsection{问题描述}
+对于 \( c \) 类分类问题，特征向量 \(\mathbf{x} \in \mathbb{R}^d \)，假设各类先验概率相等，类条件概率密度为 \( d \) 维高斯分布。  
+\begin{enumerate}
+    \item[(1)] 写出类条件概率密度函数的数学形式。
+    \item[(2)] 写出协方差矩阵相等和不等情况下的最小错误率判别函数。
+    \item[(3)] 两类等协方差情况下，决策面特点？何时通过两类均值中点？
+    \item[(4)] 当协方差矩阵奇异时，如何克服？
+\end{enumerate}
+
+\subsection{解答}
+\begin{itemize}
+    \item[(1)] \textbf{类条件概率密度}  
+    \[
+    p(\mathbf{x} \mid \omega_i) = \frac{1}{(2\pi)^{d/2} |\Sigma_i|^{1/2}} \exp\left( -\frac{1}{2} (\mathbf{x} - \mu_i)^T \Sigma_i^{-1} (\mathbf{x} - \mu_i) \right)
+    \]
+    \item[(2)] \textbf{判别函数}  
+    \begin{itemize}
+        \item \textbf{协方差相等} (\(\Sigma_i = \Sigma\))：  
+        \[
+        g_i(\mathbf{x}) = \mathbf{w}^T \mathbf{x} + w_{i0}, \quad \mathbf{w} = \Sigma^{-1} \mu_i, \quad w_{i0} = -\frac{1}{2} \mu_i^T \Sigma^{-1} \mu_i
+        \]
+        \item \textbf{协方差不等}：  
+        \[
+        g_i(\mathbf{x}) = -\frac{1}{2} \log |\Sigma_i| - \frac{1}{2} (\mathbf{x} - \mu_i)^T \Sigma_i^{-1} (\mathbf{x} - \mu_i)
+        \]
+    \end{itemize}
+    \item[(3)] \textbf{决策面特点}  
+    为超平面；当先验概率相等时，通过均值中点 \(\frac{\mu_1 + \mu_2}{2}\)。
+    \item[(4)] \textbf{克服奇异协方差}  
+    在协方差矩阵对角线上加小正数（岭正则化）。
+\end{itemize}
+
+\section{问题3：隐马尔可夫模型示例}
+
+\subsection{问题描述}
+举出生活中符合隐马尔可夫模型（HMM）的例子，说明隐状态和观测变量含义，及观测序列评价、状态序列解码的实际问题。
+
+\subsection{解答}
+\textbf{示例}：语音识别  
+\begin{itemize}
+    \item \textbf{隐状态}：音素序列（如 /k/, /æ/, /t/ 表示“cat”）。
+    \item \textbf{观测变量}：音频信号的 MFCC 特征。
+    \item \textbf{观测序列评价}：计算音频对应特定单词的概率。
+    \item \textbf{状态序列解码}：确定音频的最可能音素序列，识别单词。
+\end{itemize}
+
+\section{问题4：参数与非参数估计}
+
+\subsection{问题描述}
+\begin{enumerate}
+    \item[(1)] 总结最大似然估计、贝叶斯估计、k近邻估计和Parzen估计的原理和步骤。
+    \item[(2)] 一维特征空间样本点 \{-1, 2, 3, 6\}，服从均匀分布，用最大似然法估计概率密度函数。
+    \item[(3)] 样本服从高斯分布，协方差 \(\Sigma\) 已知，均值 \(\mu\) 未知，先验为 \(\mathcal{N}(m_0, \Sigma_0)\)，写出贝叶斯估计过程。
+    \item[(4)] 说明k近邻密度估计与分类规则的关系。
+\end{enumerate}
+
+\subsection{解答}
+\begin{itemize}
+    \item[(1)] \textbf{估计方法}  
+    \begin{itemize}
+        \item \textbf{最大似然估计（MLE）}：最大化似然函数 \( L(\theta) = p(\mathbf{x} \mid \theta) \)。步骤：定义似然，对数化，求导，解参数。
+        \item \textbf{贝叶斯估计}：使用后验 \( p(\theta \mid \mathbf{x}) \propto p(\mathbf{x} \mid \theta) p(\theta) \)，取均值或众数。步骤：指定先验，计算后验，估计参数。
+        \item \textbf{k近邻估计}：基于样本局部密度估计。步骤：选择 \( k \)，计算距离，估计密度为 \(\frac{k}{nV}\)。
+        \item \textbf{Parzen窗估计}：使用核函数估计密度。步骤：选择核和带宽，累加样本贡献。
+    \end{itemize}
+    \item[(2)] \textbf{均匀分布的 MLE}  
+    样本：\{-1, 2, 3, 6\}，假设 \( x \sim U(a, b) \)。  
+    似然：\( L(a, b) = \frac{1}{(b - a)^4} \)，约束 \( a \leq -1 \)，\( b \geq 6 \)。  
+    最大化得：\(\hat{a} = -1\), \(\hat{b} = 6\)。  
+    密度：\( p(x) = \frac{1}{7} \)，\( -1 \leq x \leq 6 \)。
+    \item[(3)] \textbf{贝叶斯估计}  
+    后验：  
+    \[
+    p(\mu \mid \mathbf{x}) = \mathcal{N}\left( \left( \Sigma_0^{-1} + n \Sigma^{-1} \right)^{-1} \left( \Sigma_0^{-1} m_0 + n \Sigma^{-1} \bar{\mathbf{x}} \right), \left( \Sigma_0^{-1} + n \Sigma^{-1} \right)^{-1} \right)
+    \]  
+    估计：\(\hat{\mu} = \left( \Sigma_0^{-1} + n \Sigma^{-1} \right)^{-1} \left( \Sigma_0^{-1} m_0 + n \Sigma^{-1} \bar{\mathbf{x}} \right)\)。
+    \item[(4)] \textbf{k近邻关系}  
+    密度估计通过局部样本统计密度，分类通过多数投票；两者均依赖局部信息，密度估计可间接支持分类。
+\end{itemize}
+
+\section{问题5：USPS数据集分类}
+
+\subsection{问题描述}
+在 USPS 数据集中，选择两个类别（例如数字 0 和 1），实现贝叶斯分类器：  
+\begin{enumerate}
+    \item[(1)] 假设两类协方差矩阵相等，使用线性判别函数分类，并与 Fisher 判别准则的线性分类器比较。
+    \item[(2)] 分别估计两类协方差矩阵，使用二次判别函数分类。
+    \item[(3)] 分析两种情况的结果。
+\end{enumerate}
+
+\textbf{附录：USPS 数据集}  
+手写数字数据集，包含 7291 个训练样本和 2007 个测试样本，每样本为 16×16 灰度图像（256 维）。数据以 HDF5 格式提供，包含 \texttt{train} 和 \texttt{test} 组，各有 \texttt{data}（特征）和 \texttt{target}（标签）。
+
+读取代码：
+\begin{lstlisting}
+import h5py
+with h5py.File(path, 'r') as hf:
+    train = hf.get('train')
+    X_tr = train.get('data')[:]
+    y_tr = train.get('target')[:]
+    test = hf.get('test')
+    X_te = test.get('data')[:]
+    y_te = test.get('target')[:]
+\end{lstlisting}
+
+\subsection{解答}
+
+\subsubsection{方法}
+\begin{itemize}
+    \item \textbf{数据预处理}：
+    \begin{itemize}
+        \item 使用 \texttt{h5py} 加载数据集。
+        \item 选择数字 0 和 1，过滤训练和测试数据。
+        \item 特征维度：256 维向量。
+    \end{itemize}
+    \item \textbf{第一部分：线性判别分析（LDA）与 Fisher 判别}：
+    \begin{itemize}
+        \item \textbf{假设}：两类共享协方差矩阵。
+        \item \textbf{LDA}：线性判别函数：
+        \[
+        g(\mathbf{x}) = \mathbf{w}^T \mathbf{x} + w_0
+        \]
+        其中：
+        \[
+        \mathbf{w} = \Sigma^{-1} (\mu_1 - \mu_0), \quad w_0 = -\frac{1}{2} (\mu_0 + \mu_1)^T \Sigma^{-1} (\mu_1 - \mu_0)
+        \]
+        \item \textbf{Fisher 判别}：投影向量：
+        \[
+        \mathbf{w} = S_W^{-1} (\mu_1 - \mu_0)
+        \]
+        在此情况下与 LDA 等价。
+        \item \textbf{注意}：特征维度（256）可能导致协方差矩阵奇异，需正则化。
+    \end{itemize}
+    \item \textbf{第二部分：二次判别分析（QDA）}：
+    \begin{itemize}
+        \item \textbf{假设}：两类协方差矩阵不同。
+        \item \textbf{判别函数}：
+        \[
+        g_i(\mathbf{x}) = -\frac{1}{2} \log |\Sigma_i| - \frac{1}{2} (\mathbf{x} - \mu_i)^T \Sigma_i^{-1} (\mathbf{x} - \mu_i)
+        \]
+        \item \textbf{实现}：分别计算协方差矩阵，加入正则化。
+    \end{itemize}
+    \item \textbf{评估与分析}：
+    \begin{itemize}
+        \item 在测试集上计算准确率。
+        \item 讨论高维和小样本的影响。
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Python 代码实现}
+\begin{lstlisting}
+import h5py
+import numpy as np
+from numpy.linalg import pinv, det
+
+# 加载 USPS 数据集
+with h5py.File('usps.h5', 'r') as hf:
+    train = hf.get('train')
+    X_tr = train.get('data')[:]  # 训练数据
+    y_tr = train.get('target')[:]  # 训练标签
+    test = hf.get('test')
+    X_te = test.get('data')[:]  # 测试数据
+    y_te = test.get('target')[:]  # 测试标签
+
+# 过滤类别 0 和 1
+mask_tr = (y_tr == 0) | (y_tr == 1)
+X_tr = X_tr[mask_tr]
+y_tr = y_tr[mask_tr]
+mask_te = (y_te == 0) | (y_te == 1)
+X_te = X_te[mask_te]
+y_te = y_te[mask_te]
+
+# 第一部分：LDA（协方差矩阵相等）
+# 计算每类均值
+mu0 = np.mean(X_tr[y_tr == 0], axis=0)  # 类别 0 均值
+mu1 = np.mean(X_tr[y_tr == 1], axis=0)  # 类别 1 均值
+
+# 计算共享协方差矩阵并正则化
+epsilon = 1e-5
+d = X_tr.shape[1]
+Sigma = np.cov(X_tr.T) + epsilon * np.eye(d)
+
+# 计算线性判别参数
+w = pinv(Sigma) @ (mu1 - mu0)
+w0 = -0.5 * (mu0 + mu1).T @ pinv(Sigma) @ (mu1 - mu0)
+
+# 测试集预测
+scores = X_te @ w + w0
+y_pred_lda = (scores > 0).astype(int)
+accuracy_lda = np.mean(y_pred_lda == y_te)
+print(f'LDA 准确率: {accuracy_lda:.4f}')
+
+# Fisher 判别：与 LDA 等价，省略
+
+# 第二部分：QDA（分别估计协方差）
+# 计算每类协方差矩阵并正则化
+Sigma0 = np.cov(X_tr[y_tr == 0].T) + epsilon * np.eye(d)
+Sigma1 = np.cov(X_tr[y_tr == 1].T) + epsilon * np.eye(d)
+
+# 计算逆矩阵和行列式
+inv_Sigma0 = pinv(Sigma0)
+inv_Sigma1 = pinv(Sigma1)
+log_det_Sigma0 = np.log(det(Sigma0))
+log_det_Sigma1 = np.log(det(Sigma1))
+
+# 定义二次判别函数
+def g(x, mu, inv_Sigma, log_det):
+    diff = x - mu
+    return -0.5 * log_det - 0.5 * diff.T @ inv_Sigma @ diff
+
+# 测试集预测
+y_pred_qda = []
+for x in X_te:
+    g0 = ['$x = np.linspace(0, 10, 100)
+y = np.sin(x)
+
+plt.figure(figsize=(8, 6))
+plt.plot(x, y, 'b-', label='Sine wave')
+plt.title('Simple Sine Wave')
+plt.xlabel('X axis')
+plt.ylabel('Y axis')
+plt.grid(True)
+plt.legend()
+
+plt.savefig('sine_wave.png') g(x, mu0, inv_Sigma0, log_det_Sigma0)
+    g1 = g(x, mu1, inv_Sigma1, log_det_Sigma1)
+    y_pred_qda.append(1 if g1 > g0 else 0)
+
+accuracy_qda = np.mean(np.array(y_pred_qda) == y_te)
+print(f'QDA 准确率: {accuracy_qda:.4f}')
+\end{lstlisting}
+
+\subsubsection{代码说明}
+\begin{itemize}
+    \item \textbf{数据加载与过滤}：使用 \texttt{h5py} 读取数据，过滤类别 0 和 1。
+    \item \textbf{LDA 实现}：计算均值和共享协方差，加入正则化，执行线性分类。
+    \item \textbf{QDA 实现}：计算每类协方差，计算二次判别函数。
+    \item \textbf{Fisher 判别}：与 LDA 等价，未单独实现。
+\end{itemize}
+
+\subsubsection{结果分析与讨论}
+\begin{itemize}
+    \item \textbf{数据特性}：
+    \begin{itemize}
+        \item 训练集约 1400-1500 个样本，每类约 700 个。
+        \item 特征维度 256，图像特征相关性高，需正则化。
+    \end{itemize}
+    \item \textbf{LDA 与 Fisher 判别}：
+    \begin{itemize}
+        \item LDA 使用线性边界，适合 0 和 1 的明显差异。
+        \item Fisher 判别在此等价。
+    \end{itemize}
+    \item \textbf{QDA 性能}：
+    \begin{itemize}
+        \item 优势：捕捉协方差差异。
+        \item 挑战：高维小样本导致过拟合。
+    \end{itemize}
+    \item \textbf{预期结果}：
+    \begin{itemize}
+        \item 准确率可能 >90\%。
+        \item LDA 因参数少更稳定，QDA 可能因过拟合略逊。
+    \end{itemize}
+    \item \textbf{改进建议}：
+    \begin{itemize}
+        \item 使用 PCA 降维。
+        \item 优化正则化参数 \(\epsilon\)。
+        \item 考虑数据增强。
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{总结}
+LDA 和 QDA 分类器成功分类 USPS 数据集的数字 0 和 1。LDA 因简单性更鲁棒，QDA 因高维限制可能过拟合。两者对 0 和 1 均表现良好，具体准确率需运行验证。
+
+% 附录 A
+\chapter*{附录 A. 中英文对照表}\addcontentsline{toc}{chapter}{附录 A. 中英文对照表}   
+\thispagestyle{plain} 
+\setcounter{section}{0}   
+\renewcommand\thesection{A.\arabic{section}}   
+\renewcommand{\thefigure}{A.\arabic{figure}} 
+\renewcommand{\thetable}{A.\arabic{table}}
+
+\section{中英文对照表}
+\begin{multicols}{2}  
+
+\begin{table}[H]
+\centering
+\caption{\textbf{中英文对照表}}
+\begin{tabular}{ll}
+\toprule
+英文 & 中文 \\
+\midrule
+Bayes classification & 贝叶斯分类 \\
+decision rule & 决策规则 \\
+minimum error rate & 最小错误率 \\
+minimum risk & 最小风险 \\
+rejection option & 拒识选项 \\
+Gaussian distribution & 高斯分布 \\
+covariance matrix & 协方差矩阵 \\
+discriminant function & 判别函数 \\
+decision boundary & 决策边界 \\
+Hidden Markov Model & 隐马尔可夫模型 \\
+hidden state & 隐状态 \\
+observation sequence & 观测序列 \\
+maximum likelihood estimation & 最大似然估计 \\
+Bayesian estimation & 贝叶斯估计 \\
+k-Nearest Neighbor & k近邻 \\
+Parzen window & Parzen窗 \\
+linear discriminant & 线性判别 \\
+quadratic discriminant & 二次判别 \\
+prior probability & 先验概率 \\
+posterior probability & 后验概率 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{multicols}
+
+
+\end{document}
