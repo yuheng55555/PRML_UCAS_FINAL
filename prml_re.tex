@@ -1,5 +1,3 @@
-
-
 % 若编译失败，且生成 .synctex(busy) 辅助文件，可能有两个原因：
 % 1. 需要插入的图片不存在：Ctrl + F 搜索 'figure' 将这些代码注释/删除掉即可
 % 2. 路径/文件名含中文或空格：更改路径/文件名即可
@@ -90,6 +88,7 @@
     %\usepackage{pgfplots}   % 宏包：绘图工具
     \usepackage{enumerate}  % 宏包：列表环境设置
     \usepackage{enumitem}   % 宏包：列表环境设置
+    \usepackage{longtable}  % 宏包：长表格
 
 % 文章页面margin设置
     \usepackage[a4paper]{geometry}
@@ -391,326 +390,809 @@
 % --------------------------------------------------------------- %
 
 
-\chapter{分类与估计问题的解答}
+\chapter{神经网络部分}
 
+\section{神经网络简介}
 
-\section{问题1：贝叶斯分类与风险决策}
-
-\subsection{问题描述}
-对于 \( c \) 类分类问题，假设各类先验概率为 \( P(\omega_i), i=1,\ldots,c \)，类条件概率密度为 \( p(\mathbf{x} \mid \omega_i), i=1,\ldots,c \)（\(\mathbf{x}\) 为样本特征向量），将第 \( j \) 类样本误判为第 \( i \) 类的风险为 \( \lambda_{ij} \)。  
-\begin{enumerate}
-    \item[(1)] 写出贝叶斯最小错误率决策和最小风险决策的决策规则。
-    \item[(2)] 引入拒识选项（第 \( c+1 \) 类）。假设正确分类风险 \( \lambda(\alpha_i \mid \omega_j) = 0 (i=j) \)；错误分类风险 \( \lambda(\alpha_i \mid \omega_j) = \lambda_s (i \neq j) \)；拒识风险 \( \lambda(\alpha_i \mid \omega_j) = \lambda_r (i = c+1) \)。写出带拒识的最小风险决策规则。
-    \item[(3)] 说明拒识的意义。
-\end{enumerate}
-
-\subsection{解答}
+\subsection{关键要点}
 \begin{itemize}
-    \item[(1)] \textbf{决策规则}
-    \begin{itemize}
-        \item \textbf{贝叶斯最小错误率决策}：  
-        对样本 \(\mathbf{x}\)，选择最大化后验概率的类别：  
-        \[
-        \hat{\omega} = \arg\max_{\omega_i} P(\omega_i \mid \mathbf{x}) = \arg\max_{\omega_i} p(\mathbf{x} \mid \omega_i) P(\omega_i)
-        \]
-        \item \textbf{最小风险决策}：  
-        选择最小化期望风险的类别：  
-        \[
-        \hat{\omega} = \arg\min_{\omega_i} \sum_{j=1}^c \lambda_{ij} P(\omega_j \mid \mathbf{x})
-        \]
-    \end{itemize}
-    \item[(2)] \textbf{带拒识的最小风险决策}  
-    拒识为 \(\alpha_{c+1}\)。分类风险：  
-    \[
-    R(\alpha_i \mid \mathbf{x}) = \lambda_s (1 - P(\omega_i \mid \mathbf{x})), \quad i=1,\ldots,c
-    \]  
-    拒识风险：  
-    \[
-    R(\alpha_{c+1} \mid \mathbf{x}) = \lambda_r
-    \]  
-    决策规则：  
-    \[
-    \hat{\alpha} = \arg\min_{\alpha_k} R(\alpha_k \mid \mathbf{x}), \quad k = 1, \ldots, c+1
-    \]  
-    若 \( P(\omega_i \mid \mathbf{x}) > 1 - \frac{\lambda_r}{\lambda_s} \)，分类为 \(\omega_i\)；否则拒识。
-    \item[(3)] \textbf{拒识的意义}  
-    拒识允许分类器在不确定性高时避免决策，降低误分类风险。例如，在医疗诊断中，拒识可避免错误治疗。
+    \item 神经网络是一种模拟人类大脑的计算模型，用于模式识别和预测。
+    \item 不同结构如CNN、RNN、Transformer各有专长，适合不同任务。
+    \item 研究表明，选择结构取决于数据类型和任务复杂性。
 \end{itemize}
 
-\section{问题2：高斯分布下的分类}
+\subsection{神经网络简介}
+神经网络（Neural Networks）是一种受生物神经系统启发的机器学习模型，广泛用于分类、回归和生成任务。它由多个节点（神经元）组成，这些节点通过加权连接传递信息，通过训练调整权重以学习数据模式。训练过程包括前向传播、损失计算和反向传播。
 
-\subsection{问题描述}
-对于 \( c \) 类分类问题，特征向量 \(\mathbf{x} \in \mathbb{R}^d \)，假设各类先验概率相等，类条件概率密度为 \( d \) 维高斯分布。  
-\begin{enumerate}
-    \item[(1)] 写出类条件概率密度函数的数学形式。
-    \item[(2)] 写出协方差矩阵相等和不等情况下的最小错误率判别函数。
-    \item[(3)] 两类等协方差情况下，决策面特点？何时通过两类均值中点？
-    \item[(4)] 当协方差矩阵奇异时，如何克服？
-\end{enumerate}
-
-\subsection{解答}
+\subsection{不同结构概述}
+神经网络的结构多样化，每种结构针对特定问题设计。以下是主要类型及其适用场景：
 \begin{itemize}
-    \item[(1)] \textbf{类条件概率密度}  
-    \[
-    p(\mathbf{x} \mid \omega_i) = \frac{1}{(2\pi)^{d/2} |\Sigma_i|^{1/2}} \exp\left( -\frac{1}{2} (\mathbf{x} - \mu_i)^T \Sigma_i^{-1} (\mathbf{x} - \mu_i) \right)
-    \]
-    \item[(2)] \textbf{判别函数}  
-    \begin{itemize}
-        \item \textbf{协方差相等} (\(\Sigma_i = \Sigma\))：  
-        \[
-        g_i(\mathbf{x}) = \mathbf{w}^T \mathbf{x} + w_{i0}, \quad \mathbf{w} = \Sigma^{-1} \mu_i, \quad w_{i0} = -\frac{1}{2} \mu_i^T \Sigma^{-1} \mu_i
-        \]
-        \item \textbf{协方差不等}：  
-        \[
-        g_i(\mathbf{x}) = -\frac{1}{2} \log |\Sigma_i| - \frac{1}{2} (\mathbf{x} - \mu_i)^T \Sigma_i^{-1} (\mathbf{x} - \mu_i)
-        \]
-    \end{itemize}
-    \item[(3)] \textbf{决策面特点}  
-    为超平面；当先验概率相等时，通过均值中点 \(\frac{\mu_1 + \mu_2}{2}\)。
-    \item[(4)] \textbf{克服奇异协方差}  
-    在协方差矩阵对角线上加小正数（岭正则化）。
+    \item \textbf{前向神经网络（FNN）}：适合静态数据，如基本分类。
+    \item \textbf{卷积神经网络（CNN）}：专为图像处理设计，擅长提取空间特征。
+    \item \textbf{循环神经网络（RNN）和LSTM}：处理序列数据，如语言和时间序列。
+    \item \textbf{Transformer}：用于自然语言处理，处理长距离依赖。
+    \item \textbf{生成对抗网络（GAN）}：生成新数据，如图像生成。
 \end{itemize}
 
-\section{问题3：隐马尔可夫模型示例}
+\subsection{结构差异}
+不同结构在数据处理方式和复杂性上存在显著差异。例如，CNN通过卷积层提取图像特征，而RNN通过循环捕捉时间依赖。Transformer则依赖注意力机制，适合并行计算。
 
-\subsection{问题描述}
-举出生活中符合隐马尔可夫模型（HMM）的例子，说明隐状态和观测变量含义，及观测序列评价、状态序列解码的实际问题。
+\subsection{详细调研笔记}
 
-\subsection{解答}
-\textbf{示例}：语音识别  
+\subsubsection{神经网络的定义与基本原理}
+神经网络是一种计算模型，模仿人类大脑神经系统的结构和功能，由多个层组成，包括输入层、隐藏层和输出层。每个神经元通过加权连接接收输入，应用激活函数（如ReLU、Sigmoid）引入非线性，并传递信号。训练过程通过前向传播计算输出，反向传播调整权重以最小化损失函数（如均方误差或交叉熵）。
+
+根据GeeksforGeeks的《Neural Networks: A Beginner's Guide》（\url{https://www.geeksforgeeks.org/neural-networks-a-beginners-guide/}），神经网络的学习过程包括输入计算、输出生成和参数迭代优化，广泛应用于模式识别和复杂问题解决。
+
+\subsubsection{不同神经网络结构的分类与差异}
+神经网络的结构多样化，以下是主要类型及其特点，基于V7Labs的《The Essential Guide to Neural Network Architectures》（\url{https://www.v7labs.com/blog/neural-network-architectures-guide/}）和Wikipedia的《Neural Network (Machine Learning)》（\url{https://en.wikipedia.org/wiki/Neural_network_(machine_learning)})的综合分析：
+
+\begin{table}[h]
+\centering
+\caption{神经网络结构对比}
+\begin{tabular}{l p{3.5cm} p{4cm} p{3cm} p{3cm}}
+\toprule
+\textbf{结构} & \textbf{描述} & \textbf{关键特点} & \textbf{局限性} & \textbf{适用场景} \\
+\midrule
+FNN & 数据单向流动，无循环 & 无反馈机制，适合静态数据 & 无法处理序列数据 & 基本分类、回归 \\
+MLP & FNN扩展，含隐藏层 & 处理非线性，学习复杂特征 & 计算量较大 & 图像分类、语音识别 \\
+CNN & 使用卷积和池化层 & 参数共享，提取空间特征 & 池化丢失空间关系 & 图像分析、物体检测、NLP \\
+RNN & 处理序列，循环连接 & 记忆功能，捕捉时间依赖 & 梯度消失，训练慢 & NLP、时间序列预测 \\
+LSTM & RNN增强，记忆单元 & 解决长序列梯度消失 & 训练速度慢 & 语音识别、机器翻译 \\
+GAN & 生成器与判别器对抗 & 生成新数据，如图像、文本 & 训练不稳定 & 图像生成、数据增强 \\
+Transformer & 基于注意力机制 & 处理长距离依赖，适合并行计算 & 计算复杂度高 & NLP、机器翻译 \\
+ResNet & 深层网络，跳跃连接 & 解决梯度消失，深层训练 & 高计算资源 & 图像分类、目标检测 \\
+Hopfield网络 & 基于Hebbian学习 & 能量函数驱动，模式检索 & 不适合训练 & 模式识别、记忆任务 \\
+Boltzmann机 & 无监督，生成式模型 & 随机能量函数，生成任务 & 训练复杂 & 深度生成模型 \\
+RBF网络 & 功能近似，2013年引入 & 最佳近似，非线性识别 & 结构与MLP不同 & 分类、非线性系统 \\
+Highway网络 & 2015年，开放门控 & 训练超深网络，解决退化 & 与ResNet类似 & 深层网络训练 \\
+Capsule网络 & 改进CNN，保留层次 & 本地胶囊，旋转鲁棒性 & 实现复杂 & 空间关系处理 \\
+MobileNet & 轻量级，适合移动设备 & 深度可分离卷积 & 性能受限 & 移动设备、机器人 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{结构之间的关键差异}
 \begin{itemize}
-    \item \textbf{隐状态}：音素序列（如 /k/, /æ/, /t/ 表示“cat”）。
-    \item \textbf{观测变量}：音频信号的 MFCC 特征。
-    \item \textbf{观测序列评价}：计算音频对应特定单词的概率。
-    \item \textbf{状态序列解码}：确定音频的最可能音素序列，识别单词。
+    \item \textbf{数据类型}：CNN适合空间数据（如图像），RNN/LSTM适合序列数据（如文本、时间序列），Transformer适合长文本，GAN专注于生成数据。
+    \item \textbf{处理方式}：FNN和MLP是静态的，RNN/LSTM有记忆，Transformer使用自注意力机制，CNN通过卷积提取特征。
+    \item \textbf{复杂性}：FNN简单，ResNet和Transformer更复杂，适合更深的网络和复杂任务。
+    \item \textbf{训练难度}：RNN存在梯度消失，LSTM和ResNet通过设计解决此问题，Transformer依赖大规模数据和计算资源。
 \end{itemize}
 
-\section{问题4：参数与非参数估计}
+根据MyGreatLearning的《Types of Neural Networks and Definition of Neural Network》（\url{https://www.mygreatlearning.com/blog/types-of-neural-networks/}），不同结构的生物启发设计（如ANN模仿神经元）决定了其在复杂应用中的表现。
 
-\subsection{问题描述}
-\begin{enumerate}
-    \item[(1)] 总结最大似然估计、贝叶斯估计、k近邻估计和Parzen估计的原理和步骤。
-    \item[(2)] 一维特征空间样本点 \{-1, 2, 3, 6\}，服从均匀分布，用最大似然法估计概率密度函数。
-    \item[(3)] 样本服从高斯分布，协方差 \(\Sigma\) 已知，均值 \(\mu\) 未知，先验为 \(\mathcal{N}(m_0, \Sigma_0)\)，写出贝叶斯估计过程。
-    \item[(4)] 说明k近邻密度估计与分类规则的关系。
-\end{enumerate}
-
-\subsection{解答}
+\subsubsection{应用场景与局限性}
 \begin{itemize}
-    \item[(1)] \textbf{估计方法}  
-    \begin{itemize}
-        \item \textbf{最大似然估计（MLE）}：最大化似然函数 \( L(\theta) = p(\mathbf{x} \mid \theta) \)。步骤：定义似然，对数化，求导，解参数。
-        \item \textbf{贝叶斯估计}：使用后验 \( p(\theta \mid \mathbf{x}) \propto p(\mathbf{x} \mid \theta) p(\theta) \)，取均值或众数。步骤：指定先验，计算后验，估计参数。
-        \item \textbf{k近邻估计}：基于样本局部密度估计。步骤：选择 \( k \)，计算距离，估计密度为 \(\frac{k}{nV}\)。
-        \item \textbf{Parzen窗估计}：使用核函数估计密度。步骤：选择核和带宽，累加样本贡献。
-    \end{itemize}
-    \item[(2)] \textbf{均匀分布的 MLE}  
-    样本：\{-1, 2, 3, 6\}，假设 \( x \sim U(a, b) \)。  
-    似然：\( L(a, b) = \frac{1}{(b - a)^4} \)，约束 \( a \leq -1 \)，\( b \geq 6 \)。  
-    最大化得：\(\hat{a} = -1\), \(\hat{b} = 6\)。  
-    密度：\( p(x) = \frac{1}{7} \)，\( -1 \leq x \leq 6 \)。
-    \item[(3)] \textbf{贝叶斯估计}  
-    后验：  
-    \[
-    p(\mu \mid \mathbf{x}) = \mathcal{N}\left( \left( \Sigma_0^{-1} + n \Sigma^{-1} \right)^{-1} \left( \Sigma_0^{-1} m_0 + n \Sigma^{-1} \bar{\mathbf{x}} \right), \left( \Sigma_0^{-1} + n \Sigma^{-1} \right)^{-1} \right)
-    \]  
-    估计：\(\hat{\mu} = \left( \Sigma_0^{-1} + n \Sigma^{-1} \right)^{-1} \left( \Sigma_0^{-1} m_0 + n \Sigma^{-1} \bar{\mathbf{x}} \right)\)。
-    \item[(4)] \textbf{k近邻关系}  
-    密度估计通过局部样本统计密度，分类通过多数投票；两者均依赖局部信息，密度估计可间接支持分类。
+    \item \textbf{CNN}：如V7Labs的《Convolutional Neural Networks Guide》
+          （\href{https://www.v7labs.com/blog/convolutional-neural-networks-guide/}{链接}）所示，
+          广泛用于图像分类和物体检测，但池化可能丢失空间信息。
+    \item \textbf{RNN和LSTM}：如V7Labs的《Recurrent Neural Networks Guide》
+          （\href{https://www.v7labs.com/blog/recurrent-neural-networks-guide/}{链接}）所述，
+          适合NLP和时间序列，但训练慢，LSTM缓解了长序列问题。
+    \item \textbf{Transformer}：如《Attention Is All You Need》
+          （\href{https://arxiv.org/abs/1706.03762}{链接}）所示，
+          主导NLP领域，但计算成本高。
+    \item \textbf{GAN}：如《Generative Adversarial Networks》
+          （\href{https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf}{链接}）所述，
+          生成高质量图像，但训练不稳定。
 \end{itemize}
 
-\section{问题5：USPS数据集分类}
+\subsubsection{综合分析}
+神经网络的多样性使其能够适应各种任务，从简单的FNN到复杂的Transformer，每种结构都有其独特优势。
+选择合适结构需考虑数据类型、任务复杂性和计算资源。根据UpGrad的《Neural Network Architecture: 
+Types, Components \& Key Algorithms》
+（\href{https://www.upgrad.com/blog/neural-network-architecture-components-algorithms/}{链接}），
+未来的研究可能进一步优化轻量级网络（如MobileNet）以适应移动设备。
 
-\subsection{问题描述}
-在 USPS 数据集中，选择两个类别（例如数字 0 和 1），实现贝叶斯分类器：  
-\begin{enumerate}
-    \item[(1)] 假设两类协方差矩阵相等，使用线性判别函数分类，并与 Fisher 判别准则的线性分类器比较。
-    \item[(2)] 分别估计两类协方差矩阵，使用二次判别函数分类。
-    \item[(3)] 分析两种情况的结果。
-\end{enumerate}
-
-\textbf{附录：USPS 数据集}  
-手写数字数据集，包含 7291 个训练样本和 2007 个测试样本，每样本为 16×16 灰度图像（256 维）。数据以 HDF5 格式提供，包含 \texttt{train} 和 \texttt{test} 组，各有 \texttt{data}（特征）和 \texttt{target}（标签）。
-
-读取代码：
-\begin{lstlisting}
-import h5py
-with h5py.File(path, 'r') as hf:
-    train = hf.get('train')
-    X_tr = train.get('data')[:]
-    y_tr = train.get('target')[:]
-    test = hf.get('test')
-    X_te = test.get('data')[:]
-    y_te = test.get('target')[:]
-\end{lstlisting}
-
-\subsection{解答}
-
-\subsubsection{方法}
+\subsubsection{关键引用}
 \begin{itemize}
-    \item \textbf{数据预处理}：
-    \begin{itemize}
-        \item 使用 \texttt{h5py} 加载数据集。
-        \item 选择数字 0 和 1，过滤训练和测试数据。
-        \item 特征维度：256 维向量。
-    \end{itemize}
-    \item \textbf{第一部分：线性判别分析（LDA）与 Fisher 判别}：
-    \begin{itemize}
-        \item \textbf{假设}：两类共享协方差矩阵。
-        \item \textbf{LDA}：线性判别函数：
-        \[
-        g(\mathbf{x}) = \mathbf{w}^T \mathbf{x} + w_0
-        \]
-        其中：
-        \[
-        \mathbf{w} = \Sigma^{-1} (\mu_1 - \mu_0), \quad w_0 = -\frac{1}{2} (\mu_0 + \mu_1)^T \Sigma^{-1} (\mu_1 - \mu_0)
-        \]
-        \item \textbf{Fisher 判别}：投影向量：
-        \[
-        \mathbf{w} = S_W^{-1} (\mu_1 - \mu_0)
-        \]
-        在此情况下与 LDA 等价。
-        \item \textbf{注意}：特征维度（256）可能导致协方差矩阵奇异，需正则化。
-    \end{itemize}
-    \item \textbf{第二部分：二次判别分析（QDA）}：
-    \begin{itemize}
-        \item \textbf{假设}：两类协方差矩阵不同。
-        \item \textbf{判别函数}：
-        \[
-        g_i(\mathbf{x}) = -\frac{1}{2} \log |\Sigma_i| - \frac{1}{2} (\mathbf{x} - \mu_i)^T \Sigma_i^{-1} (\mathbf{x} - \mu_i)
-        \]
-        \item \textbf{实现}：分别计算协方差矩阵，加入正则化。
-    \end{itemize}
-    \item \textbf{评估与分析}：
-    \begin{itemize}
-        \item 在测试集上计算准确率。
-        \item 讨论高维和小样本的影响。
-    \end{itemize}
+    \item GeeksforGeeks Neural Networks Beginner's Guide: \\
+          \url{https://www.geeksforgeeks.org/neural-networks-a-beginners-guide/}
+    \item V7Labs Essential Guide to Neural Network Architectures: \\
+          \url{https://www.v7labs.com/blog/neural-network-architectures-guide/}
+    \item Wikipedia Neural Network Machine Learning: \\
+          \url{https://en.wikipedia.org/wiki/Neural_network_(machine_learning)}
+    \item MyGreatLearning Types of Neural Networks Definition: \\
+          \url{https://www.mygreatlearning.com/blog/types-of-neural-networks/}
+    \item UpGrad Neural Network Architecture Components Algorithms: \\
+          \url{https://www.upgrad.com/blog/neural-network-architecture-components-algorithms/}
+    \item V7Labs Convolutional Neural Networks Guide: \\
+          \url{https://www.v7labs.com/blog/convolutional-neural-networks-guide/}
+    \item V7Labs Recurrent Neural Networks Guide: \\
+          \url{https://www.v7labs.com/blog/recurrent-neural-networks-guide/}
+    \item Attention Is All You Need Transformer Paper: \\
+          \url{https://arxiv.org/abs/1706.03762}
+    \item Generative Adversarial Networks NIPS Paper: \\
+          \url{https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf}
 \end{itemize}
 
-\subsubsection{Python 代码实现}
-\begin{lstlisting}
-import h5py
+\cleardoublepage
+
+\subsection{ResNet 与 Vision Transformer (ViT) 的结构对比}
+
+
+\setlength\LTleft{0pt}   % 让 longtable 左对齐于正文左边界
+\setlength\LTright{0pt}  % 让 longtable 右对齐于正文右边界
+\begin{longtable}{@{}p{0.28\textwidth}p{0.34\textwidth}p{0.34\textwidth}@{}}
+\caption{ResNet 与 Vision Transformer (ViT) 的详细结构对比} \\ 
+\toprule
+\textbf{比较维度} & \textbf{ResNet} & \textbf{Vision Transformer (ViT)} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{比较维度} & \textbf{ResNet} & \textbf{Vision Transformer (ViT)} \\
+\midrule
+\endhead
+
+\textbf{架构类型}           & 卷积神经网络（CNN）                           & Transformer 架构                              \\
+\textbf{提出年份}           & 2015                                         & 2020                                        \\
+\textbf{提出机构}           & 微软研究院                                    & Google Brain                                \\
+\textbf{基本单元}           & 卷积层 + 残差连接（Residual Block）            & 自注意力模块（Multi-head Attention） + MLP   \\
+\textbf{参数量（Base模型）} & 较少（如 ResNet-50 约 25M）                   & 较多（如 ViT-B 约 86M）                     \\
+\textbf{计算复杂度}         & 较低，主要是卷积操作                           & 高，自注意力为 \(O(n^2)\) 时间复杂度         \\
+\textbf{输入处理}           & 原始图像直接进入卷积网络                       & 图像切成 Patch，再投影为序列                 \\
+\textbf{位置建模方式}       & 隐式建模（卷积天然包含位置信息）               & 显式位置编码（Positional Encoding）         \\
+\textbf{空间建模能力}       & 局部为主，靠堆叠层数扩大全局感受野             & 全局建模能力强（自注意力机制）               \\
+\textbf{可解释性}           & 较强，可通过卷积特征图分析                     & 较弱，注意力机制不易解释                     \\
+\textbf{收敛速度}           & 快速，适合从头训练                             & 慢，对初始化敏感                             \\
+\textbf{是否需要预训练}     & 可以从头训练，也支持预训练                     & 强烈依赖预训练（无预训练效果差）             \\
+\textbf{数据规模依赖}       & 中小规模数据也能表现良好                       & 需要大规模数据（如 ImageNet-21k）           \\
+\textbf{训练资源需求}       & 普通 GPU 即可训练（如单卡）                    & 需多卡/TPU，大内存显卡更佳                  \\
+\textbf{推理速度}           & 快（卷积并行度高）                             & 慢（序列操作限制并行度）                     \\
+\textbf{适合任务}           & 图像分类、目标检测、语义分割等经典视觉任务     & 大规模视觉任务、跨模态学习、多任务联合建模   \\
+\textbf{代表模型}           & ResNet-18/34/50/101/152                        & ViT-B/16, ViT-L/32, DeiT, Swin Transformer    \\
+\bottomrule
+\end{longtable}
+
+
+
+
+
+
+\section{神经网络CNN训练（纯手写第一版）}
+
+\subsection{CNN训练代码一}
+\begin{lstlisting}[language=python, caption={神经网络CNN训练（纯手写第一版）}, label={lst:cnn_train_handwritten}]
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import torchvision
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader, SubsetRandomSampler
 import numpy as np
-from numpy.linalg import pinv, det
 
-# 加载 USPS 数据集
-with h5py.File('usps.h5', 'r') as hf:
-    train = hf.get('train')
-    X_tr = train.get('data')[:]  # 训练数据
-    y_tr = train.get('target')[:]  # 训练标签
-    test = hf.get('test')
-    X_te = test.get('data')[:]  # 测试数据
-    y_te = test.get('target')[:]  # 测试标签
+# 数据预处理 - 增强数据增强
+transform_train = transforms.Compose([
+    transforms.RandomCrop(32, padding=4),
+    transforms.RandomHorizontalFlip(),
+    transforms.ToTensor(),
+    transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2470, 0.2435, 0.2616))
+])
 
-# 过滤类别 0 和 1
-mask_tr = (y_tr == 0) | (y_tr == 1)
-X_tr = X_tr[mask_tr]
-y_tr = y_tr[mask_tr]
-mask_te = (y_te == 0) | (y_te == 1)
-X_te = X_te[mask_te]
-y_te = y_te[mask_te]
+transform_test = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2470, 0.2435, 0.2616))
+])
 
-# 第一部分：LDA（协方差矩阵相等）
-# 计算每类均值
-mu0 = np.mean(X_tr[y_tr == 0], axis=0)  # 类别 0 均值
-mu1 = np.mean(X_tr[y_tr == 1], axis=0)  # 类别 1 均值
+# 加载 CIFAR-10 数据集
+trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
+testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
 
-# 计算共享协方差矩阵并正则化
-epsilon = 1e-5
-d = X_tr.shape[1]
-Sigma = np.cov(X_tr.T) + epsilon * np.eye(d)
+# 划分训练集和验证集
+validation_split = 0.2  # 20% 用于验证集
+dataset_size = len(trainset)
+indices = list(range(dataset_size))
+np.random.seed(42)  # 固定随机种子以确保可重复性
+np.random.shuffle(indices)
+split = int(np.floor(validation_split * dataset_size))
+train_indices, val_indices = indices[split:], indices[:split]
 
-# 计算线性判别参数
-w = pinv(Sigma) @ (mu1 - mu0)
-w0 = -0.5 * (mu0 + mu1).T @ pinv(Sigma) @ (mu1 - mu0)
+# 创建 DataLoader
+train_sampler = SubsetRandomSampler(train_indices)
+val_sampler = SubsetRandomSampler(val_indices)
 
-# 测试集预测
-scores = X_te @ w + w0
-y_pred_lda = (scores > 0).astype(int)
-accuracy_lda = np.mean(y_pred_lda == y_te)
-print(f'LDA 准确率: {accuracy_lda:.4f}')
+trainloader = DataLoader(trainset, batch_size=128, sampler=train_sampler, num_workers=2)
+valloader = DataLoader(trainset, batch_size=128, sampler=val_sampler, num_workers=2)
+testloader = DataLoader(testset, batch_size=128, shuffle=False, num_workers=2)
 
-# Fisher 判别：与 LDA 等价，省略
+# 定义改进的 CNN 模型
+class ImprovedCNN(nn.Module):
+    def __init__(self):
+        super(ImprovedCNN, self).__init__()
+        
+        # 第一个卷积块
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(3, 64, 3, padding=1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(64, 64, 3, padding=1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(2, 2)
+        )
+        
+        # 第二个卷积块
+        self.conv2 = nn.Sequential(
+            nn.Conv2d(64, 128, 3, padding=1),
+            nn.BatchNorm2d(128),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(128, 128, 3, padding=1),
+            nn.BatchNorm2d(128),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(2, 2)
+        )
+        
+        # 第三个卷积块
+        self.conv3 = nn.Sequential(
+            nn.Conv2d(128, 256, 3, padding=1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(256, 256, 3, padding=1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(2, 2)
+        )
+        
+        # 全连接层
+        self.fc = nn.Sequential(
+            nn.Dropout(0.5),
+            nn.Linear(256 * 4 * 4, 512),
+            nn.BatchNorm1d(512),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.5),
+            nn.Linear(512, 10)
+        )
+        
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.conv2(x)
+        x = self.conv3(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        return x
 
-# 第二部分：QDA（分别估计协方差）
-# 计算每类协方差矩阵并正则化
-Sigma0 = np.cov(X_tr[y_tr == 0].T) + epsilon * np.eye(d)
-Sigma1 = np.cov(X_tr[y_tr == 1].T) + epsilon * np.eye(d)
+# 主程序
+if __name__ == '__main__':
+    # 实例化模型
+    model = ImprovedCNN()
 
-# 计算逆矩阵和行列式
-inv_Sigma0 = pinv(Sigma0)
-inv_Sigma1 = pinv(Sigma1)
-log_det_Sigma0 = np.log(det(Sigma0))
-log_det_Sigma1 = np.log(det(Sigma1))
+    # 定义损失函数和优化器
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=5e-4)
+    # 学习率调度器
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', factor=0.1, patience=5, verbose=True)
 
-# 定义二次判别函数
-def g(x, mu, inv_Sigma, log_det):
-    diff = x - mu
-    return -0.5 * log_det - 0.5 * diff.T @ inv_Sigma @ diff
+    # 如果有 GPU，将模型移动到 GPU
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model.to(device)
+    print(f"使用设备: {device}")
 
-# 测试集预测
-y_pred_qda = []
-for x in X_te:
-    g0 = ['$x = np.linspace(0, 10, 100)
-y = np.sin(x)
+    # 训练模型
+    best_val_acc = 0.0
+    for epoch in range(100):
+        model.train()
+        running_loss = 0.0
+        correct = 0
+        total = 0
+        
+        for i, (inputs, labels) in enumerate(trainloader):
+            inputs, labels = inputs.to(device), labels.to(device)
+            
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            
+            running_loss += loss.item()
+            _, predicted = outputs.max(1)
+            total += labels.size(0)
+            correct += predicted.eq(labels).sum().item()
+            
+            if i % 100 == 99:
+                print(f'[{epoch + 1}, {i + 1}] loss: {running_loss / 100:.3f} | acc: {100.*correct/total:.2f}%')
+                running_loss = 0.0
+        
+        # 每个epoch结束后验证
+        model.eval()
+        val_loss = 0
+        correct = 0
+        total = 0
+        with torch.no_grad():
+            for data in valloader:
+                images, labels = data
+                images, labels = images.to(device), labels.to(device)
+                outputs = model(images)
+                loss = criterion(outputs, labels)
+                val_loss += loss.item()
+                _, predicted = torch.max(outputs.data, 1)
+                total += labels.size(0)
+                correct += (predicted == labels).sum().item()
+        
+        val_acc = 100. * correct / total
+        print(f'Epoch {epoch+1}: 验证准确率: {val_acc:.2f}%')
+        
+        # 更新学习率
+        scheduler.step(val_loss)
+        
+        # 保存验证集上最佳模型
+        if val_acc > best_val_acc:
+            best_val_acc = val_acc
+            torch.save(model.state_dict(), 'best_cifar10_model.pth')
+            print(f'保存最佳模型，验证准确率: {best_val_acc:.2f}%')
 
-plt.figure(figsize=(8, 6))
-plt.plot(x, y, 'b-', label='Sine wave')
-plt.title('Simple Sine Wave')
-plt.xlabel('X axis')
-plt.ylabel('Y axis')
-plt.grid(True)
-plt.legend()
+    print('训练完成')
 
-plt.savefig('sine_wave.png') g(x, mu0, inv_Sigma0, log_det_Sigma0)
-    g1 = g(x, mu1, inv_Sigma1, log_det_Sigma1)
-    y_pred_qda.append(1 if g1 > g0 else 0)
+    # 加载最佳模型进行测试
+    model.load_state_dict(torch.load('best_cifar10_model.pth'))
+    model.eval()
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for data in testloader:
+            images, labels = data
+            images, labels = images.to(device), labels.to(device)
+            outputs = model(images)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
 
-accuracy_qda = np.mean(np.array(y_pred_qda) == y_te)
-print(f'QDA 准确率: {accuracy_qda:.4f}')
+    print(f'最佳模型在测试集上的准确率: {100 * correct / total:.2f}%')
 \end{lstlisting}
 
-\subsubsection{代码说明}
-\begin{itemize}
-    \item \textbf{数据加载与过滤}：使用 \texttt{h5py} 读取数据，过滤类别 0 和 1。
-    \item \textbf{LDA 实现}：计算均值和共享协方差，加入正则化，执行线性分类。
-    \item \textbf{QDA 实现}：计算每类协方差，计算二次判别函数。
-    \item \textbf{Fisher 判别}：与 LDA 等价，未单独实现。
-\end{itemize}
 
-\subsubsection{结果分析与讨论}
-\begin{itemize}
-    \item \textbf{数据特性}：
-    \begin{itemize}
-        \item 训练集约 1400-1500 个样本，每类约 700 个。
-        \item 特征维度 256，图像特征相关性高，需正则化。
-    \end{itemize}
-    \item \textbf{LDA 与 Fisher 判别}：
-    \begin{itemize}
-        \item LDA 使用线性边界，适合 0 和 1 的明显差异。
-        \item Fisher 判别在此等价。
-    \end{itemize}
-    \item \textbf{QDA 性能}：
-    \begin{itemize}
-        \item 优势：捕捉协方差差异。
-        \item 挑战：高维小样本导致过拟合。
-    \end{itemize}
-    \item \textbf{预期结果}：
-    \begin{itemize}
-        \item 准确率可能 >90\%。
-        \item LDA 因参数少更稳定，QDA 可能因过拟合略逊。
-    \end{itemize}
-    \item \textbf{改进建议}：
-    \begin{itemize}
-        \item 使用 PCA 降维。
-        \item 优化正则化参数 \(\epsilon\)。
-        \item 考虑数据增强。
-    \end{itemize}
-\end{itemize}
+\subsection{CNN训练结果一}
 
-\subsubsection{总结}
-LDA 和 QDA 分类器成功分类 USPS 数据集的数字 0 和 1。LDA 因简单性更鲁棒，QDA 因高维限制可能过拟合。两者对 0 和 1 均表现良好，具体准确率需运行验证。
+\begin{lstlisting}[language=python, caption={CNN训练结果一}, label={lst:cnn_train_result}]
+PS C:\Users\78003\Desktop\prml_re> conda activate yclearning
+PS C:\Users\78003\Desktop\prml_re> python cifar10_classifier.py
+
+使用设备: cuda
+[1, 100] loss: 1.809 | acc: 33.21%
+[1, 200] loss: 1.504 | acc: 38.73%
+[1, 300] loss: 1.352 | acc: 42.79%
+Epoch 1: 验证准确率: 56.47%
+保存最佳模型，验证准确率: 56.47%
+[2, 100] loss: 1.199 | acc: 56.58%
+[2, 200] loss: 1.103 | acc: 58.38%
+[2, 300] loss: 1.011 | acc: 60.15%
+Epoch 2: 验证准确率: 64.90%
+保存最佳模型，验证准确率: 64.90%
+[3, 100] loss: 0.954 | acc: 66.12%
+[3, 200] loss: 0.917 | acc: 66.95%
+[3, 300] loss: 0.871 | acc: 67.58%
+Epoch 3: 验证准确率: 70.78%
+保存最佳模型，验证准确率: 70.78%
+[4, 100] loss: 0.831 | acc: 70.93%
+[4, 200] loss: 0.798 | acc: 71.69%
+[4, 300] loss: 0.782 | acc: 71.95%
+Epoch 4: 验证准确率: 73.30%
+保存最佳模型，验证准确率: 73.30%
+[5, 100] loss: 0.739 | acc: 73.97%
+[5, 200] loss: 0.731 | acc: 74.01%
+[5, 300] loss: 0.714 | acc: 74.43%
+Epoch 5: 验证准确率: 76.20%
+保存最佳模型，验证准确率: 76.20%
+[6, 100] loss: 0.680 | acc: 76.30%
+[6, 200] loss: 0.683 | acc: 76.29%
+[6, 300] loss: 0.668 | acc: 76.58%
+Epoch 6: 验证准确率: 77.85%
+保存最佳模型，验证准确率: 77.85%
+[7, 100] loss: 0.635 | acc: 77.83%
+[7, 200] loss: 0.629 | acc: 78.08%
+[7, 300] loss: 0.614 | acc: 78.16%
+Epoch 7: 验证准确率: 77.90%
+保存最佳模型，验证准确率: 77.90%
+[8, 100] loss: 0.570 | acc: 80.14%
+[8, 200] loss: 0.592 | acc: 79.82%
+[8, 300] loss: 0.578 | acc: 79.85%
+Epoch 8: 验证准确率: 74.53%
+[9, 100] loss: 0.560 | acc: 80.34%
+[9, 200] loss: 0.539 | acc: 80.91%
+[9, 300] loss: 0.563 | acc: 80.74%
+Epoch 9: 验证准确率: 79.64%
+保存最佳模型，验证准确率: 79.64%
+[10, 100] loss: 0.531 | acc: 81.48%
+[10, 200] loss: 0.518 | acc: 81.74%
+[10, 300] loss: 0.520 | acc: 81.86%
+Epoch 10: 验证准确率: 79.66%
+保存最佳模型，验证准确率: 79.66%
+[11, 100] loss: 0.496 | acc: 82.55%
+[11, 200] loss: 0.489 | acc: 82.66%
+[11, 300] loss: 0.508 | acc: 82.54%
+Epoch 11: 验证准确率: 81.02%
+保存最佳模型，验证准确率: 81.02%
+[12, 100] loss: 0.476 | acc: 83.37%
+[12, 200] loss: 0.473 | acc: 83.50%
+[12, 300] loss: 0.481 | acc: 83.46%
+Epoch 12: 验证准确率: 81.05%
+保存最佳模型，验证准确率: 81.05%
+[13, 100] loss: 0.444 | acc: 84.39%
+[13, 200] loss: 0.450 | acc: 84.26%
+[13, 300] loss: 0.462 | acc: 84.24%
+Epoch 13: 验证准确率: 82.22%
+保存最佳模型，验证准确率: 82.22%
+[14, 100] loss: 0.439 | acc: 85.30%
+[14, 200] loss: 0.439 | acc: 84.95%
+[14, 300] loss: 0.431 | acc: 85.12%
+Epoch 14: 验证准确率: 82.90%
+保存最佳模型，验证准确率: 82.90%
+[15, 100] loss: 0.404 | acc: 86.21%
+[15, 200] loss: 0.430 | acc: 85.62%
+[15, 300] loss: 0.428 | acc: 85.62%
+Epoch 15: 验证准确率: 82.29%
+[16, 100] loss: 0.404 | acc: 86.64%
+[16, 200] loss: 0.399 | acc: 86.36%
+[16, 300] loss: 0.410 | acc: 86.12%
+Epoch 16: 验证准确率: 81.61%
+[17, 100] loss: 0.367 | acc: 87.30%
+[17, 200] loss: 0.396 | acc: 86.84%
+[17, 300] loss: 0.394 | acc: 86.74%
+Epoch 17: 验证准确率: 84.65%
+保存最佳模型，验证准确率: 84.65%
+[18, 100] loss: 0.378 | acc: 86.97%
+[18, 200] loss: 0.361 | acc: 87.34%
+[18, 300] loss: 0.385 | acc: 87.26%
+Epoch 18: 验证准确率: 84.91%
+保存最佳模型，验证准确率: 84.91%
+[19, 100] loss: 0.355 | acc: 88.05%
+[19, 200] loss: 0.356 | acc: 87.84%
+[19, 300] loss: 0.356 | acc: 87.79%
+Epoch 19: 验证准确率: 84.83%
+[20, 100] loss: 0.349 | acc: 87.92%
+[20, 200] loss: 0.351 | acc: 87.86%
+[20, 300] loss: 0.345 | acc: 87.98%
+Epoch 20: 验证准确率: 83.97%
+[21, 100] loss: 0.327 | acc: 88.64%
+[21, 200] loss: 0.334 | acc: 88.61%
+[21, 300] loss: 0.350 | acc: 88.48%
+Epoch 21: 验证准确率: 85.73%
+保存最佳模型，验证准确率: 85.73%
+[22, 100] loss: 0.314 | acc: 89.00%
+[22, 200] loss: 0.327 | acc: 88.87%
+[22, 300] loss: 0.329 | acc: 88.83%
+Epoch 22: 验证准确率: 86.06%
+保存最佳模型，验证准确率: 86.06%
+[23, 100] loss: 0.303 | acc: 89.61%
+[23, 200] loss: 0.317 | acc: 89.28%
+[23, 300] loss: 0.313 | acc: 89.32%
+Epoch 23: 验证准确率: 84.69%
+[24, 100] loss: 0.296 | acc: 89.80%
+[24, 200] loss: 0.296 | acc: 89.88%
+[24, 300] loss: 0.305 | acc: 89.72%
+Epoch 24: 验证准确率: 86.34%
+保存最佳模型，验证准确率: 86.34%
+[25, 100] loss: 0.276 | acc: 90.61%
+[25, 200] loss: 0.299 | acc: 90.16%
+[25, 300] loss: 0.295 | acc: 90.01%
+Epoch 25: 验证准确率: 85.66%
+[26, 100] loss: 0.279 | acc: 90.29%
+[26, 200] loss: 0.284 | acc: 90.25%
+[26, 300] loss: 0.290 | acc: 90.18%
+Epoch 26: 验证准确率: 85.39%
+[27, 100] loss: 0.264 | acc: 90.84%
+[27, 200] loss: 0.276 | acc: 90.66%
+[27, 300] loss: 0.285 | acc: 90.42%
+Epoch 27: 验证准确率: 86.06%
+[28, 100] loss: 0.259 | acc: 91.16%
+[28, 200] loss: 0.274 | acc: 90.86%
+[28, 300] loss: 0.273 | acc: 90.73%
+Epoch 28: 验证准确率: 87.06%
+保存最佳模型，验证准确率: 87.06%
+[29, 100] loss: 0.252 | acc: 91.41%
+[29, 200] loss: 0.251 | acc: 91.33%
+[29, 300] loss: 0.276 | acc: 91.04%
+Epoch 29: 验证准确率: 85.27%
+[30, 100] loss: 0.247 | acc: 91.32%
+[30, 200] loss: 0.248 | acc: 91.41%
+[30, 300] loss: 0.254 | acc: 91.36%
+Epoch 30: 验证准确率: 85.89%
+[31, 100] loss: 0.231 | acc: 91.73%
+[31, 200] loss: 0.241 | acc: 91.70%
+[31, 300] loss: 0.260 | acc: 91.41%
+Epoch 31: 验证准确率: 86.26%
+[32, 100] loss: 0.225 | acc: 92.10%
+[32, 200] loss: 0.241 | acc: 91.93%
+[32, 300] loss: 0.239 | acc: 91.88%
+Epoch 32: 验证准确率: 85.79%
+[33, 100] loss: 0.223 | acc: 92.39%
+[33, 200] loss: 0.227 | acc: 92.32%
+[33, 300] loss: 0.240 | acc: 92.12%
+Epoch 33: 验证准确率: 86.09%
+[34, 100] loss: 0.216 | acc: 92.52%
+[34, 200] loss: 0.224 | acc: 92.39%
+[34, 300] loss: 0.224 | acc: 92.26%
+Epoch 34: 验证准确率: 86.81%
+[35, 100] loss: 0.174 | acc: 94.02%
+[35, 200] loss: 0.163 | acc: 94.31%
+[35, 300] loss: 0.153 | acc: 94.62%
+Epoch 35: 验证准确率: 89.76%
+保存最佳模型，验证准确率: 89.76%
+[36, 100] loss: 0.137 | acc: 95.43%
+[36, 200] loss: 0.143 | acc: 95.30%
+[36, 300] loss: 0.147 | acc: 95.28%
+Epoch 36: 验证准确率: 90.03%
+保存最佳模型，验证准确率: 90.03%
+[37, 100] loss: 0.127 | acc: 95.79%
+[37, 200] loss: 0.133 | acc: 95.71%
+[37, 300] loss: 0.134 | acc: 95.64%
+Epoch 37: 验证准确率: 89.60%
+[38, 100] loss: 0.128 | acc: 95.79%
+[38, 200] loss: 0.130 | acc: 95.79%
+[38, 300] loss: 0.127 | acc: 95.82%
+Epoch 38: 验证准确率: 90.13%
+保存最佳模型，验证准确率: 90.13%
+[39, 100] loss: 0.116 | acc: 96.22%
+[39, 200] loss: 0.121 | acc: 96.20%
+[39, 300] loss: 0.125 | acc: 96.17%
+Epoch 39: 验证准确率: 90.29%
+保存最佳模型，验证准确率: 90.29%
+[40, 100] loss: 0.113 | acc: 96.48%
+[40, 200] loss: 0.115 | acc: 96.36%
+[40, 300] loss: 0.120 | acc: 96.22%
+Epoch 40: 验证准确率: 90.32%
+保存最佳模型，验证准确率: 90.32%
+[41, 100] loss: 0.113 | acc: 96.33%
+[41, 200] loss: 0.112 | acc: 96.38%
+[41, 300] loss: 0.110 | acc: 96.39%
+Epoch 41: 验证准确率: 90.15%
+[42, 100] loss: 0.108 | acc: 96.53%
+[42, 200] loss: 0.119 | acc: 96.36%
+[42, 300] loss: 0.111 | acc: 96.41%
+Epoch 42: 验证准确率: 90.12%
+[43, 100] loss: 0.103 | acc: 96.80%
+[43, 200] loss: 0.113 | acc: 96.61%
+[43, 300] loss: 0.114 | acc: 96.49%
+Epoch 43: 验证准确率: 90.38%
+保存最佳模型，验证准确率: 90.38%
+[44, 100] loss: 0.108 | acc: 96.48%
+[44, 200] loss: 0.102 | acc: 96.60%
+[44, 300] loss: 0.111 | acc: 96.54%
+Epoch 44: 验证准确率: 90.61%
+保存最佳模型，验证准确率: 90.61%
+[45, 100] loss: 0.100 | acc: 96.78%
+[45, 200] loss: 0.106 | acc: 96.77%
+[45, 300] loss: 0.101 | acc: 96.79%
+Epoch 45: 验证准确率: 90.46%
+[46, 100] loss: 0.099 | acc: 96.74%
+[46, 200] loss: 0.105 | acc: 96.65%
+[46, 300] loss: 0.101 | acc: 96.71%
+Epoch 46: 验证准确率: 90.20%
+[47, 100] loss: 0.096 | acc: 96.93%
+[47, 200] loss: 0.102 | acc: 96.77%
+[47, 300] loss: 0.100 | acc: 96.77%
+Epoch 47: 验证准确率: 90.17%
+[48, 100] loss: 0.101 | acc: 96.80%
+[48, 200] loss: 0.097 | acc: 96.82%
+[48, 300] loss: 0.099 | acc: 96.81%
+Epoch 48: 验证准确率: 90.44%
+[49, 100] loss: 0.094 | acc: 96.95%
+[49, 200] loss: 0.090 | acc: 97.04%
+[49, 300] loss: 0.091 | acc: 97.10%
+Epoch 49: 验证准确率: 90.40%
+[50, 100] loss: 0.089 | acc: 97.23%
+[50, 200] loss: 0.092 | acc: 97.12%
+[50, 300] loss: 0.090 | acc: 97.15%
+Epoch 50: 验证准确率: 90.52%
+[51, 100] loss: 0.087 | acc: 97.48%
+[51, 200] loss: 0.087 | acc: 97.37%
+[51, 300] loss: 0.093 | acc: 97.24%
+Epoch 51: 验证准确率: 90.48%
+[52, 100] loss: 0.088 | acc: 97.29%
+[52, 200] loss: 0.089 | acc: 97.29%
+[52, 300] loss: 0.086 | acc: 97.26%
+Epoch 52: 验证准确率: 90.55%
+[53, 100] loss: 0.090 | acc: 97.21%
+[53, 200] loss: 0.089 | acc: 97.25%
+[53, 300] loss: 0.087 | acc: 97.23%
+Epoch 53: 验证准确率: 90.48%
+[54, 100] loss: 0.091 | acc: 97.01%
+[54, 200] loss: 0.088 | acc: 97.12%
+[54, 300] loss: 0.087 | acc: 97.20%
+Epoch 54: 验证准确率: 90.57%
+[55, 100] loss: 0.088 | acc: 97.13%
+[55, 200] loss: 0.088 | acc: 97.15%
+[55, 300] loss: 0.087 | acc: 97.16%
+Epoch 55: 验证准确率: 90.77%
+保存最佳模型，验证准确率: 90.77%
+[56, 100] loss: 0.086 | acc: 97.30%
+[56, 200] loss: 0.084 | acc: 97.47%
+[56, 300] loss: 0.083 | acc: 97.46%
+Epoch 56: 验证准确率: 90.63%
+[57, 100] loss: 0.089 | acc: 97.21%
+[57, 200] loss: 0.086 | acc: 97.24%
+[57, 300] loss: 0.087 | acc: 97.18%
+Epoch 57: 验证准确率: 90.71%
+[58, 100] loss: 0.086 | acc: 97.09%
+[58, 200] loss: 0.083 | acc: 97.28%
+[58, 300] loss: 0.085 | acc: 97.27%
+Epoch 58: 验证准确率: 90.69%
+[59, 100] loss: 0.083 | acc: 97.47%
+[59, 200] loss: 0.077 | acc: 97.57%
+[59, 300] loss: 0.089 | acc: 97.42%
+Epoch 59: 验证准确率: 90.40%
+[60, 100] loss: 0.081 | acc: 97.55%
+[60, 200] loss: 0.085 | acc: 97.43%
+[60, 300] loss: 0.084 | acc: 97.40%
+Epoch 60: 验证准确率: 90.52%
+[61, 100] loss: 0.084 | acc: 97.29%
+[61, 200] loss: 0.080 | acc: 97.38%
+[61, 300] loss: 0.082 | acc: 97.40%
+Epoch 61: 验证准确率: 90.67%
+[62, 100] loss: 0.084 | acc: 97.35%
+[62, 200] loss: 0.084 | acc: 97.37%
+[62, 300] loss: 0.088 | acc: 97.34%
+Epoch 62: 验证准确率: 90.44%
+[63, 100] loss: 0.090 | acc: 97.15%
+[63, 200] loss: 0.079 | acc: 97.42%
+[63, 300] loss: 0.085 | acc: 97.39%
+Epoch 63: 验证准确率: 90.39%
+[64, 100] loss: 0.083 | acc: 97.39%
+[64, 200] loss: 0.086 | acc: 97.25%
+[64, 300] loss: 0.084 | acc: 97.24%
+Epoch 64: 验证准确率: 90.70%
+[65, 100] loss: 0.093 | acc: 97.04%
+[65, 200] loss: 0.086 | acc: 97.08%
+[65, 300] loss: 0.081 | acc: 97.21%
+Epoch 65: 验证准确率: 90.24%
+[66, 100] loss: 0.088 | acc: 97.16%
+[66, 200] loss: 0.082 | acc: 97.29%
+[66, 300] loss: 0.083 | acc: 97.32%
+Epoch 66: 验证准确率: 90.48%
+[67, 100] loss: 0.084 | acc: 97.45%
+[67, 200] loss: 0.086 | acc: 97.33%
+[67, 300] loss: 0.078 | acc: 97.41%
+Epoch 67: 验证准确率: 90.39%
+[68, 100] loss: 0.083 | acc: 97.55%
+[68, 200] loss: 0.085 | acc: 97.44%
+[68, 300] loss: 0.079 | acc: 97.50%
+Epoch 68: 验证准确率: 90.56%
+[69, 100] loss: 0.082 | acc: 97.55%
+[69, 200] loss: 0.085 | acc: 97.42%
+[69, 300] loss: 0.083 | acc: 97.43%
+Epoch 69: 验证准确率: 90.32%
+[70, 100] loss: 0.084 | acc: 97.33%
+[70, 200] loss: 0.087 | acc: 97.27%
+[70, 300] loss: 0.088 | acc: 97.21%
+Epoch 70: 验证准确率: 90.07%
+[71, 100] loss: 0.089 | acc: 97.13%
+[71, 200] loss: 0.085 | acc: 97.19%
+[71, 300] loss: 0.089 | acc: 97.18%
+Epoch 71: 验证准确率: 90.63%
+[72, 100] loss: 0.085 | acc: 97.14%
+[72, 200] loss: 0.082 | acc: 97.31%
+[72, 300] loss: 0.084 | acc: 97.33%
+Epoch 72: 验证准确率: 90.39%
+[73, 100] loss: 0.082 | acc: 97.50%
+[73, 200] loss: 0.085 | acc: 97.50%
+[73, 300] loss: 0.086 | acc: 97.45%
+Epoch 73: 验证准确率: 90.45%
+[74, 100] loss: 0.083 | acc: 97.33%
+[74, 200] loss: 0.086 | acc: 97.33%
+[74, 300] loss: 0.082 | acc: 97.33%
+Epoch 74: 验证准确率: 90.37%
+[75, 100] loss: 0.083 | acc: 97.50%
+[75, 200] loss: 0.085 | acc: 97.44%
+[75, 300] loss: 0.086 | acc: 97.33%
+Epoch 75: 验证准确率: 90.35%
+[76, 100] loss: 0.083 | acc: 97.48%
+[76, 200] loss: 0.080 | acc: 97.46%
+[76, 300] loss: 0.089 | acc: 97.41%
+Epoch 76: 验证准确率: 90.45%
+[77, 100] loss: 0.079 | acc: 97.59%
+[77, 200] loss: 0.085 | acc: 97.39%
+[77, 300] loss: 0.088 | acc: 97.33%
+Epoch 77: 验证准确率: 90.40%
+[78, 100] loss: 0.079 | acc: 97.53%
+[78, 200] loss: 0.082 | acc: 97.51%
+[78, 300] loss: 0.091 | acc: 97.34%
+Epoch 78: 验证准确率: 90.32%
+[79, 100] loss: 0.084 | acc: 97.15%
+[79, 200] loss: 0.084 | acc: 97.23%
+[79, 300] loss: 0.081 | acc: 97.31%
+Epoch 79: 验证准确率: 90.33%
+[80, 100] loss: 0.088 | acc: 97.33%
+[80, 200] loss: 0.083 | acc: 97.33%
+[80, 300] loss: 0.080 | acc: 97.46%
+Epoch 80: 验证准确率: 90.48%
+[81, 100] loss: 0.085 | acc: 97.38%
+[81, 200] loss: 0.084 | acc: 97.32%
+[81, 300] loss: 0.085 | acc: 97.24%
+Epoch 81: 验证准确率: 90.67%
+[82, 100] loss: 0.081 | acc: 97.54%
+[82, 200] loss: 0.082 | acc: 97.45%
+[82, 300] loss: 0.082 | acc: 97.48%
+Epoch 82: 验证准确率: 90.43%
+[83, 100] loss: 0.079 | acc: 97.72%
+[83, 200] loss: 0.082 | acc: 97.52%
+[83, 300] loss: 0.087 | acc: 97.45%
+Epoch 83: 验证准确率: 90.40%
+[84, 100] loss: 0.083 | acc: 97.50%
+[84, 200] loss: 0.082 | acc: 97.45%
+[84, 300] loss: 0.084 | acc: 97.41%
+Epoch 84: 验证准确率: 90.07%
+[85, 100] loss: 0.083 | acc: 97.30%
+[85, 200] loss: 0.084 | acc: 97.27%
+[85, 300] loss: 0.085 | acc: 97.25%
+Epoch 85: 验证准确率: 90.24%
+[86, 100] loss: 0.085 | acc: 97.32%
+[86, 200] loss: 0.081 | acc: 97.38%
+[86, 300] loss: 0.083 | acc: 97.38%
+Epoch 86: 验证准确率: 90.34%
+[87, 100] loss: 0.087 | acc: 97.26%
+[87, 200] loss: 0.085 | acc: 97.33%
+[87, 300] loss: 0.088 | acc: 97.31%
+Epoch 87: 验证准确率: 90.45%
+[88, 100] loss: 0.085 | acc: 97.38%
+[88, 200] loss: 0.084 | acc: 97.32%
+[88, 300] loss: 0.085 | acc: 97.33%
+Epoch 88: 验证准确率: 90.38%
+[89, 100] loss: 0.084 | acc: 97.45%
+[89, 200] loss: 0.080 | acc: 97.48%
+[89, 300] loss: 0.085 | acc: 97.39%
+Epoch 89: 验证准确率: 90.62%
+[90, 100] loss: 0.087 | acc: 97.17%
+[90, 200] loss: 0.085 | acc: 97.19%
+[90, 300] loss: 0.082 | acc: 97.32%
+Epoch 90: 验证准确率: 90.41%
+[91, 100] loss: 0.085 | acc: 97.27%
+[91, 200] loss: 0.086 | acc: 97.31%
+[91, 300] loss: 0.086 | acc: 97.30%
+Epoch 91: 验证准确率: 90.59%
+[92, 100] loss: 0.085 | acc: 97.30%
+[92, 200] loss: 0.087 | acc: 97.32%
+[92, 300] loss: 0.082 | acc: 97.39%
+Epoch 92: 验证准确率: 90.71%
+[93, 100] loss: 0.089 | acc: 97.17%
+[93, 200] loss: 0.085 | acc: 97.23%
+[93, 300] loss: 0.086 | acc: 97.25%
+Epoch 93: 验证准确率: 90.59%
+[94, 100] loss: 0.084 | acc: 97.45%
+[94, 200] loss: 0.088 | acc: 97.39%
+[94, 300] loss: 0.087 | acc: 97.31%
+Epoch 94: 验证准确率: 90.52%
+[95, 100] loss: 0.089 | acc: 97.12%
+[95, 200] loss: 0.083 | acc: 97.21%
+[95, 300] loss: 0.083 | acc: 97.21%
+Epoch 95: 验证准确率: 90.66%
+[96, 100] loss: 0.085 | acc: 97.41%
+[96, 200] loss: 0.082 | acc: 97.48%
+[96, 300] loss: 0.080 | acc: 97.49%
+Epoch 96: 验证准确率: 90.63%
+[97, 100] loss: 0.086 | acc: 97.29%
+[97, 200] loss: 0.081 | acc: 97.41%
+[97, 300] loss: 0.088 | acc: 97.37%
+Epoch 97: 验证准确率: 90.34%
+[98, 100] loss: 0.083 | acc: 97.54%
+[98, 200] loss: 0.086 | acc: 97.45%
+[98, 300] loss: 0.079 | acc: 97.49%
+Epoch 98: 验证准确率: 90.28%
+[99, 100] loss: 0.081 | acc: 97.44%
+[99, 200] loss: 0.087 | acc: 97.30%
+[99, 300] loss: 0.084 | acc: 97.33%
+Epoch 99: 验证准确率: 90.43%
+[100, 100] loss: 0.083 | acc: 97.47%
+[100, 200] loss: 0.084 | acc: 97.43%
+[100, 300] loss: 0.085 | acc: 97.39%
+Epoch 100: 验证准确率: 90.59%
+训练完成
+最佳模型在测试集上的准确率: 90.60%
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 % 附录 A
 \chapter*{附录 A. 中英文对照表}\addcontentsline{toc}{chapter}{附录 A. 中英文对照表}   
@@ -755,6 +1237,10 @@ posterior probability & 后验概率 \\
 \end{table}
 
 \end{multicols}
+
+
+
+
 
 
 \end{document}
