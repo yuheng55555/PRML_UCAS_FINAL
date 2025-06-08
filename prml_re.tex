@@ -256,8 +256,8 @@
 
 % 图表进阶设置
     \usepackage{caption}    % 图注、表注
-        \captionsetup[figure]{name=图}  
-        \captionsetup[table]{name=表}
+        \captionsetup[figure]{name=figure}  
+        \captionsetup[table]{name=table}
         \captionsetup{
             labelfont=bf, % 设置标签为粗体
             textfont=bf,  % 设置文本为粗体
@@ -363,7 +363,23 @@
 % 序言
     \begin{cnabstract}\normalsize 
         本文为笔者模式识别与机器学习的大作业。\par
-        望老师批评指正。
+        望老师批评指正。\par
+        \vspace{1cm}
+        分工如下表所示：
+        \begin{center}
+            \begin{tabular}{|c|c|}
+                \hline
+                \textbf{姓名} & \textbf{分工} \\
+                \hline
+                王湑 &  boosting部分文章撰写\\
+                尹超 & 神经网络部分算法实现和文章撰写 \\
+                伍昱衡 & 决策树部分文章撰写 \\
+                陈志强 & 神经网络部分文章撰写 \\
+                崔祯徐 & boosting部分算法实现 \\
+                郑子辰 & 决策树部分算法实现 \\
+                \hline
+            \end{tabular}
+        \end{center}
     \end{cnabstract}
     \addcontentsline{toc}{chapter}{序言} % 手动添加为目录
 
@@ -548,13 +564,13 @@ Types, Components \& Key Algorithms》
 
 
 
+\cleardoublepage
 
 
+\section{CNN Training on CIFAR-10 Dataset}  
 
-\section{神经网络CNN训练（纯手写第一版）}
-
-\subsection{CNN训练代码一}
-\begin{lstlisting}[language=python, caption={神经网络CNN训练（纯手写第一版）}, label={lst:cnn_train_handwritten}]
+\subsection{CNN training on CIFAR-10 dataset}
+\begin{lstlisting}[language=python, caption={神经网络CNN训练（纯手写）}, label={lst:cnn_train_handwritten}]
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -743,448 +759,207 @@ if __name__ == '__main__':
 \end{lstlisting}
 
 
-\subsection{CNN训练结果一}
+\subsection{CNN训练结果}
 
-\begin{lstlisting}[language=python, caption={CNN训练结果一}, label={lst:cnn_train_result}]
-PS C:\Users\78003\Desktop\prml_re> conda activate yclearning
-PS C:\Users\78003\Desktop\prml_re> python cifar10_classifier.py
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=1.0\textwidth]{train1.png}
+%     \caption{CNN训练过程中的损失曲线}
+%     \label{fig:cnn_training_loss}   
+% \end{figure}
 
-使用设备: cuda
-[1, 100] loss: 1.809 | acc: 33.21%
-[1, 200] loss: 1.504 | acc: 38.73%
-[1, 300] loss: 1.352 | acc: 42.79%
-Epoch 1: 验证准确率: 56.47%
-保存最佳模型，验证准确率: 56.47%
-[2, 100] loss: 1.199 | acc: 56.58%
-[2, 200] loss: 1.103 | acc: 58.38%
-[2, 300] loss: 1.011 | acc: 60.15%
-Epoch 2: 验证准确率: 64.90%
-保存最佳模型，验证准确率: 64.90%
-[3, 100] loss: 0.954 | acc: 66.12%
-[3, 200] loss: 0.917 | acc: 66.95%
-[3, 300] loss: 0.871 | acc: 67.58%
-Epoch 3: 验证准确率: 70.78%
-保存最佳模型，验证准确率: 70.78%
-[4, 100] loss: 0.831 | acc: 70.93%
-[4, 200] loss: 0.798 | acc: 71.69%
-[4, 300] loss: 0.782 | acc: 71.95%
-Epoch 4: 验证准确率: 73.30%
-保存最佳模型，验证准确率: 73.30%
-[5, 100] loss: 0.739 | acc: 73.97%
-[5, 200] loss: 0.731 | acc: 74.01%
-[5, 300] loss: 0.714 | acc: 74.43%
-Epoch 5: 验证准确率: 76.20%
-保存最佳模型，验证准确率: 76.20%
-[6, 100] loss: 0.680 | acc: 76.30%
-[6, 200] loss: 0.683 | acc: 76.29%
-[6, 300] loss: 0.668 | acc: 76.58%
-Epoch 6: 验证准确率: 77.85%
-保存最佳模型，验证准确率: 77.85%
-[7, 100] loss: 0.635 | acc: 77.83%
-[7, 200] loss: 0.629 | acc: 78.08%
-[7, 300] loss: 0.614 | acc: 78.16%
-Epoch 7: 验证准确率: 77.90%
-保存最佳模型，验证准确率: 77.90%
-[8, 100] loss: 0.570 | acc: 80.14%
-[8, 200] loss: 0.592 | acc: 79.82%
-[8, 300] loss: 0.578 | acc: 79.85%
-Epoch 8: 验证准确率: 74.53%
-[9, 100] loss: 0.560 | acc: 80.34%
-[9, 200] loss: 0.539 | acc: 80.91%
-[9, 300] loss: 0.563 | acc: 80.74%
-Epoch 9: 验证准确率: 79.64%
-保存最佳模型，验证准确率: 79.64%
-[10, 100] loss: 0.531 | acc: 81.48%
-[10, 200] loss: 0.518 | acc: 81.74%
-[10, 300] loss: 0.520 | acc: 81.86%
-Epoch 10: 验证准确率: 79.66%
-保存最佳模型，验证准确率: 79.66%
-[11, 100] loss: 0.496 | acc: 82.55%
-[11, 200] loss: 0.489 | acc: 82.66%
-[11, 300] loss: 0.508 | acc: 82.54%
-Epoch 11: 验证准确率: 81.02%
-保存最佳模型，验证准确率: 81.02%
-[12, 100] loss: 0.476 | acc: 83.37%
-[12, 200] loss: 0.473 | acc: 83.50%
-[12, 300] loss: 0.481 | acc: 83.46%
-Epoch 12: 验证准确率: 81.05%
-保存最佳模型，验证准确率: 81.05%
-[13, 100] loss: 0.444 | acc: 84.39%
-[13, 200] loss: 0.450 | acc: 84.26%
-[13, 300] loss: 0.462 | acc: 84.24%
-Epoch 13: 验证准确率: 82.22%
-保存最佳模型，验证准确率: 82.22%
-[14, 100] loss: 0.439 | acc: 85.30%
-[14, 200] loss: 0.439 | acc: 84.95%
-[14, 300] loss: 0.431 | acc: 85.12%
-Epoch 14: 验证准确率: 82.90%
-保存最佳模型，验证准确率: 82.90%
-[15, 100] loss: 0.404 | acc: 86.21%
-[15, 200] loss: 0.430 | acc: 85.62%
-[15, 300] loss: 0.428 | acc: 85.62%
-Epoch 15: 验证准确率: 82.29%
-[16, 100] loss: 0.404 | acc: 86.64%
-[16, 200] loss: 0.399 | acc: 86.36%
-[16, 300] loss: 0.410 | acc: 86.12%
-Epoch 16: 验证准确率: 81.61%
-[17, 100] loss: 0.367 | acc: 87.30%
-[17, 200] loss: 0.396 | acc: 86.84%
-[17, 300] loss: 0.394 | acc: 86.74%
-Epoch 17: 验证准确率: 84.65%
-保存最佳模型，验证准确率: 84.65%
-[18, 100] loss: 0.378 | acc: 86.97%
-[18, 200] loss: 0.361 | acc: 87.34%
-[18, 300] loss: 0.385 | acc: 87.26%
-Epoch 18: 验证准确率: 84.91%
-保存最佳模型，验证准确率: 84.91%
-[19, 100] loss: 0.355 | acc: 88.05%
-[19, 200] loss: 0.356 | acc: 87.84%
-[19, 300] loss: 0.356 | acc: 87.79%
-Epoch 19: 验证准确率: 84.83%
-[20, 100] loss: 0.349 | acc: 87.92%
-[20, 200] loss: 0.351 | acc: 87.86%
-[20, 300] loss: 0.345 | acc: 87.98%
-Epoch 20: 验证准确率: 83.97%
-[21, 100] loss: 0.327 | acc: 88.64%
-[21, 200] loss: 0.334 | acc: 88.61%
-[21, 300] loss: 0.350 | acc: 88.48%
-Epoch 21: 验证准确率: 85.73%
-保存最佳模型，验证准确率: 85.73%
-[22, 100] loss: 0.314 | acc: 89.00%
-[22, 200] loss: 0.327 | acc: 88.87%
-[22, 300] loss: 0.329 | acc: 88.83%
-Epoch 22: 验证准确率: 86.06%
-保存最佳模型，验证准确率: 86.06%
-[23, 100] loss: 0.303 | acc: 89.61%
-[23, 200] loss: 0.317 | acc: 89.28%
-[23, 300] loss: 0.313 | acc: 89.32%
-Epoch 23: 验证准确率: 84.69%
-[24, 100] loss: 0.296 | acc: 89.80%
-[24, 200] loss: 0.296 | acc: 89.88%
-[24, 300] loss: 0.305 | acc: 89.72%
-Epoch 24: 验证准确率: 86.34%
-保存最佳模型，验证准确率: 86.34%
-[25, 100] loss: 0.276 | acc: 90.61%
-[25, 200] loss: 0.299 | acc: 90.16%
-[25, 300] loss: 0.295 | acc: 90.01%
-Epoch 25: 验证准确率: 85.66%
-[26, 100] loss: 0.279 | acc: 90.29%
-[26, 200] loss: 0.284 | acc: 90.25%
-[26, 300] loss: 0.290 | acc: 90.18%
-Epoch 26: 验证准确率: 85.39%
-[27, 100] loss: 0.264 | acc: 90.84%
-[27, 200] loss: 0.276 | acc: 90.66%
-[27, 300] loss: 0.285 | acc: 90.42%
-Epoch 27: 验证准确率: 86.06%
-[28, 100] loss: 0.259 | acc: 91.16%
-[28, 200] loss: 0.274 | acc: 90.86%
-[28, 300] loss: 0.273 | acc: 90.73%
-Epoch 28: 验证准确率: 87.06%
-保存最佳模型，验证准确率: 87.06%
-[29, 100] loss: 0.252 | acc: 91.41%
-[29, 200] loss: 0.251 | acc: 91.33%
-[29, 300] loss: 0.276 | acc: 91.04%
-Epoch 29: 验证准确率: 85.27%
-[30, 100] loss: 0.247 | acc: 91.32%
-[30, 200] loss: 0.248 | acc: 91.41%
-[30, 300] loss: 0.254 | acc: 91.36%
-Epoch 30: 验证准确率: 85.89%
-[31, 100] loss: 0.231 | acc: 91.73%
-[31, 200] loss: 0.241 | acc: 91.70%
-[31, 300] loss: 0.260 | acc: 91.41%
-Epoch 31: 验证准确率: 86.26%
-[32, 100] loss: 0.225 | acc: 92.10%
-[32, 200] loss: 0.241 | acc: 91.93%
-[32, 300] loss: 0.239 | acc: 91.88%
-Epoch 32: 验证准确率: 85.79%
-[33, 100] loss: 0.223 | acc: 92.39%
-[33, 200] loss: 0.227 | acc: 92.32%
-[33, 300] loss: 0.240 | acc: 92.12%
-Epoch 33: 验证准确率: 86.09%
-[34, 100] loss: 0.216 | acc: 92.52%
-[34, 200] loss: 0.224 | acc: 92.39%
-[34, 300] loss: 0.224 | acc: 92.26%
-Epoch 34: 验证准确率: 86.81%
-[35, 100] loss: 0.174 | acc: 94.02%
-[35, 200] loss: 0.163 | acc: 94.31%
-[35, 300] loss: 0.153 | acc: 94.62%
-Epoch 35: 验证准确率: 89.76%
-保存最佳模型，验证准确率: 89.76%
-[36, 100] loss: 0.137 | acc: 95.43%
-[36, 200] loss: 0.143 | acc: 95.30%
-[36, 300] loss: 0.147 | acc: 95.28%
-Epoch 36: 验证准确率: 90.03%
-保存最佳模型，验证准确率: 90.03%
-[37, 100] loss: 0.127 | acc: 95.79%
-[37, 200] loss: 0.133 | acc: 95.71%
-[37, 300] loss: 0.134 | acc: 95.64%
-Epoch 37: 验证准确率: 89.60%
-[38, 100] loss: 0.128 | acc: 95.79%
-[38, 200] loss: 0.130 | acc: 95.79%
-[38, 300] loss: 0.127 | acc: 95.82%
-Epoch 38: 验证准确率: 90.13%
-保存最佳模型，验证准确率: 90.13%
-[39, 100] loss: 0.116 | acc: 96.22%
-[39, 200] loss: 0.121 | acc: 96.20%
-[39, 300] loss: 0.125 | acc: 96.17%
-Epoch 39: 验证准确率: 90.29%
-保存最佳模型，验证准确率: 90.29%
-[40, 100] loss: 0.113 | acc: 96.48%
-[40, 200] loss: 0.115 | acc: 96.36%
-[40, 300] loss: 0.120 | acc: 96.22%
-Epoch 40: 验证准确率: 90.32%
-保存最佳模型，验证准确率: 90.32%
-[41, 100] loss: 0.113 | acc: 96.33%
-[41, 200] loss: 0.112 | acc: 96.38%
-[41, 300] loss: 0.110 | acc: 96.39%
-Epoch 41: 验证准确率: 90.15%
-[42, 100] loss: 0.108 | acc: 96.53%
-[42, 200] loss: 0.119 | acc: 96.36%
-[42, 300] loss: 0.111 | acc: 96.41%
-Epoch 42: 验证准确率: 90.12%
-[43, 100] loss: 0.103 | acc: 96.80%
-[43, 200] loss: 0.113 | acc: 96.61%
-[43, 300] loss: 0.114 | acc: 96.49%
-Epoch 43: 验证准确率: 90.38%
-保存最佳模型，验证准确率: 90.38%
-[44, 100] loss: 0.108 | acc: 96.48%
-[44, 200] loss: 0.102 | acc: 96.60%
-[44, 300] loss: 0.111 | acc: 96.54%
-Epoch 44: 验证准确率: 90.61%
-保存最佳模型，验证准确率: 90.61%
-[45, 100] loss: 0.100 | acc: 96.78%
-[45, 200] loss: 0.106 | acc: 96.77%
-[45, 300] loss: 0.101 | acc: 96.79%
-Epoch 45: 验证准确率: 90.46%
-[46, 100] loss: 0.099 | acc: 96.74%
-[46, 200] loss: 0.105 | acc: 96.65%
-[46, 300] loss: 0.101 | acc: 96.71%
-Epoch 46: 验证准确率: 90.20%
-[47, 100] loss: 0.096 | acc: 96.93%
-[47, 200] loss: 0.102 | acc: 96.77%
-[47, 300] loss: 0.100 | acc: 96.77%
-Epoch 47: 验证准确率: 90.17%
-[48, 100] loss: 0.101 | acc: 96.80%
-[48, 200] loss: 0.097 | acc: 96.82%
-[48, 300] loss: 0.099 | acc: 96.81%
-Epoch 48: 验证准确率: 90.44%
-[49, 100] loss: 0.094 | acc: 96.95%
-[49, 200] loss: 0.090 | acc: 97.04%
-[49, 300] loss: 0.091 | acc: 97.10%
-Epoch 49: 验证准确率: 90.40%
-[50, 100] loss: 0.089 | acc: 97.23%
-[50, 200] loss: 0.092 | acc: 97.12%
-[50, 300] loss: 0.090 | acc: 97.15%
-Epoch 50: 验证准确率: 90.52%
-[51, 100] loss: 0.087 | acc: 97.48%
-[51, 200] loss: 0.087 | acc: 97.37%
-[51, 300] loss: 0.093 | acc: 97.24%
-Epoch 51: 验证准确率: 90.48%
-[52, 100] loss: 0.088 | acc: 97.29%
-[52, 200] loss: 0.089 | acc: 97.29%
-[52, 300] loss: 0.086 | acc: 97.26%
-Epoch 52: 验证准确率: 90.55%
-[53, 100] loss: 0.090 | acc: 97.21%
-[53, 200] loss: 0.089 | acc: 97.25%
-[53, 300] loss: 0.087 | acc: 97.23%
-Epoch 53: 验证准确率: 90.48%
-[54, 100] loss: 0.091 | acc: 97.01%
-[54, 200] loss: 0.088 | acc: 97.12%
-[54, 300] loss: 0.087 | acc: 97.20%
-Epoch 54: 验证准确率: 90.57%
-[55, 100] loss: 0.088 | acc: 97.13%
-[55, 200] loss: 0.088 | acc: 97.15%
-[55, 300] loss: 0.087 | acc: 97.16%
-Epoch 55: 验证准确率: 90.77%
-保存最佳模型，验证准确率: 90.77%
-[56, 100] loss: 0.086 | acc: 97.30%
-[56, 200] loss: 0.084 | acc: 97.47%
-[56, 300] loss: 0.083 | acc: 97.46%
-Epoch 56: 验证准确率: 90.63%
-[57, 100] loss: 0.089 | acc: 97.21%
-[57, 200] loss: 0.086 | acc: 97.24%
-[57, 300] loss: 0.087 | acc: 97.18%
-Epoch 57: 验证准确率: 90.71%
-[58, 100] loss: 0.086 | acc: 97.09%
-[58, 200] loss: 0.083 | acc: 97.28%
-[58, 300] loss: 0.085 | acc: 97.27%
-Epoch 58: 验证准确率: 90.69%
-[59, 100] loss: 0.083 | acc: 97.47%
-[59, 200] loss: 0.077 | acc: 97.57%
-[59, 300] loss: 0.089 | acc: 97.42%
-Epoch 59: 验证准确率: 90.40%
-[60, 100] loss: 0.081 | acc: 97.55%
-[60, 200] loss: 0.085 | acc: 97.43%
-[60, 300] loss: 0.084 | acc: 97.40%
-Epoch 60: 验证准确率: 90.52%
-[61, 100] loss: 0.084 | acc: 97.29%
-[61, 200] loss: 0.080 | acc: 97.38%
-[61, 300] loss: 0.082 | acc: 97.40%
-Epoch 61: 验证准确率: 90.67%
-[62, 100] loss: 0.084 | acc: 97.35%
-[62, 200] loss: 0.084 | acc: 97.37%
-[62, 300] loss: 0.088 | acc: 97.34%
-Epoch 62: 验证准确率: 90.44%
-[63, 100] loss: 0.090 | acc: 97.15%
-[63, 200] loss: 0.079 | acc: 97.42%
-[63, 300] loss: 0.085 | acc: 97.39%
-Epoch 63: 验证准确率: 90.39%
-[64, 100] loss: 0.083 | acc: 97.39%
-[64, 200] loss: 0.086 | acc: 97.25%
-[64, 300] loss: 0.084 | acc: 97.24%
-Epoch 64: 验证准确率: 90.70%
-[65, 100] loss: 0.093 | acc: 97.04%
-[65, 200] loss: 0.086 | acc: 97.08%
-[65, 300] loss: 0.081 | acc: 97.21%
-Epoch 65: 验证准确率: 90.24%
-[66, 100] loss: 0.088 | acc: 97.16%
-[66, 200] loss: 0.082 | acc: 97.29%
-[66, 300] loss: 0.083 | acc: 97.32%
-Epoch 66: 验证准确率: 90.48%
-[67, 100] loss: 0.084 | acc: 97.45%
-[67, 200] loss: 0.086 | acc: 97.33%
-[67, 300] loss: 0.078 | acc: 97.41%
-Epoch 67: 验证准确率: 90.39%
-[68, 100] loss: 0.083 | acc: 97.55%
-[68, 200] loss: 0.085 | acc: 97.44%
-[68, 300] loss: 0.079 | acc: 97.50%
-Epoch 68: 验证准确率: 90.56%
-[69, 100] loss: 0.082 | acc: 97.55%
-[69, 200] loss: 0.085 | acc: 97.42%
-[69, 300] loss: 0.083 | acc: 97.43%
-Epoch 69: 验证准确率: 90.32%
-[70, 100] loss: 0.084 | acc: 97.33%
-[70, 200] loss: 0.087 | acc: 97.27%
-[70, 300] loss: 0.088 | acc: 97.21%
-Epoch 70: 验证准确率: 90.07%
-[71, 100] loss: 0.089 | acc: 97.13%
-[71, 200] loss: 0.085 | acc: 97.19%
-[71, 300] loss: 0.089 | acc: 97.18%
-Epoch 71: 验证准确率: 90.63%
-[72, 100] loss: 0.085 | acc: 97.14%
-[72, 200] loss: 0.082 | acc: 97.31%
-[72, 300] loss: 0.084 | acc: 97.33%
-Epoch 72: 验证准确率: 90.39%
-[73, 100] loss: 0.082 | acc: 97.50%
-[73, 200] loss: 0.085 | acc: 97.50%
-[73, 300] loss: 0.086 | acc: 97.45%
-Epoch 73: 验证准确率: 90.45%
-[74, 100] loss: 0.083 | acc: 97.33%
-[74, 200] loss: 0.086 | acc: 97.33%
-[74, 300] loss: 0.082 | acc: 97.33%
-Epoch 74: 验证准确率: 90.37%
-[75, 100] loss: 0.083 | acc: 97.50%
-[75, 200] loss: 0.085 | acc: 97.44%
-[75, 300] loss: 0.086 | acc: 97.33%
-Epoch 75: 验证准确率: 90.35%
-[76, 100] loss: 0.083 | acc: 97.48%
-[76, 200] loss: 0.080 | acc: 97.46%
-[76, 300] loss: 0.089 | acc: 97.41%
-Epoch 76: 验证准确率: 90.45%
-[77, 100] loss: 0.079 | acc: 97.59%
-[77, 200] loss: 0.085 | acc: 97.39%
-[77, 300] loss: 0.088 | acc: 97.33%
-Epoch 77: 验证准确率: 90.40%
-[78, 100] loss: 0.079 | acc: 97.53%
-[78, 200] loss: 0.082 | acc: 97.51%
-[78, 300] loss: 0.091 | acc: 97.34%
-Epoch 78: 验证准确率: 90.32%
-[79, 100] loss: 0.084 | acc: 97.15%
-[79, 200] loss: 0.084 | acc: 97.23%
-[79, 300] loss: 0.081 | acc: 97.31%
-Epoch 79: 验证准确率: 90.33%
-[80, 100] loss: 0.088 | acc: 97.33%
-[80, 200] loss: 0.083 | acc: 97.33%
-[80, 300] loss: 0.080 | acc: 97.46%
-Epoch 80: 验证准确率: 90.48%
-[81, 100] loss: 0.085 | acc: 97.38%
-[81, 200] loss: 0.084 | acc: 97.32%
-[81, 300] loss: 0.085 | acc: 97.24%
-Epoch 81: 验证准确率: 90.67%
-[82, 100] loss: 0.081 | acc: 97.54%
-[82, 200] loss: 0.082 | acc: 97.45%
-[82, 300] loss: 0.082 | acc: 97.48%
-Epoch 82: 验证准确率: 90.43%
-[83, 100] loss: 0.079 | acc: 97.72%
-[83, 200] loss: 0.082 | acc: 97.52%
-[83, 300] loss: 0.087 | acc: 97.45%
-Epoch 83: 验证准确率: 90.40%
-[84, 100] loss: 0.083 | acc: 97.50%
-[84, 200] loss: 0.082 | acc: 97.45%
-[84, 300] loss: 0.084 | acc: 97.41%
-Epoch 84: 验证准确率: 90.07%
-[85, 100] loss: 0.083 | acc: 97.30%
-[85, 200] loss: 0.084 | acc: 97.27%
-[85, 300] loss: 0.085 | acc: 97.25%
-Epoch 85: 验证准确率: 90.24%
-[86, 100] loss: 0.085 | acc: 97.32%
-[86, 200] loss: 0.081 | acc: 97.38%
-[86, 300] loss: 0.083 | acc: 97.38%
-Epoch 86: 验证准确率: 90.34%
-[87, 100] loss: 0.087 | acc: 97.26%
-[87, 200] loss: 0.085 | acc: 97.33%
-[87, 300] loss: 0.088 | acc: 97.31%
-Epoch 87: 验证准确率: 90.45%
-[88, 100] loss: 0.085 | acc: 97.38%
-[88, 200] loss: 0.084 | acc: 97.32%
-[88, 300] loss: 0.085 | acc: 97.33%
-Epoch 88: 验证准确率: 90.38%
-[89, 100] loss: 0.084 | acc: 97.45%
-[89, 200] loss: 0.080 | acc: 97.48%
-[89, 300] loss: 0.085 | acc: 97.39%
-Epoch 89: 验证准确率: 90.62%
-[90, 100] loss: 0.087 | acc: 97.17%
-[90, 200] loss: 0.085 | acc: 97.19%
-[90, 300] loss: 0.082 | acc: 97.32%
-Epoch 90: 验证准确率: 90.41%
-[91, 100] loss: 0.085 | acc: 97.27%
-[91, 200] loss: 0.086 | acc: 97.31%
-[91, 300] loss: 0.086 | acc: 97.30%
-Epoch 91: 验证准确率: 90.59%
-[92, 100] loss: 0.085 | acc: 97.30%
-[92, 200] loss: 0.087 | acc: 97.32%
-[92, 300] loss: 0.082 | acc: 97.39%
-Epoch 92: 验证准确率: 90.71%
-[93, 100] loss: 0.089 | acc: 97.17%
-[93, 200] loss: 0.085 | acc: 97.23%
-[93, 300] loss: 0.086 | acc: 97.25%
-Epoch 93: 验证准确率: 90.59%
-[94, 100] loss: 0.084 | acc: 97.45%
-[94, 200] loss: 0.088 | acc: 97.39%
-[94, 300] loss: 0.087 | acc: 97.31%
-Epoch 94: 验证准确率: 90.52%
-[95, 100] loss: 0.089 | acc: 97.12%
-[95, 200] loss: 0.083 | acc: 97.21%
-[95, 300] loss: 0.083 | acc: 97.21%
-Epoch 95: 验证准确率: 90.66%
-[96, 100] loss: 0.085 | acc: 97.41%
-[96, 200] loss: 0.082 | acc: 97.48%
-[96, 300] loss: 0.080 | acc: 97.49%
-Epoch 96: 验证准确率: 90.63%
-[97, 100] loss: 0.086 | acc: 97.29%
-[97, 200] loss: 0.081 | acc: 97.41%
-[97, 300] loss: 0.088 | acc: 97.37%
-Epoch 97: 验证准确率: 90.34%
-[98, 100] loss: 0.083 | acc: 97.54%
-[98, 200] loss: 0.086 | acc: 97.45%
-[98, 300] loss: 0.079 | acc: 97.49%
-Epoch 98: 验证准确率: 90.28%
-[99, 100] loss: 0.081 | acc: 97.44%
-[99, 200] loss: 0.087 | acc: 97.30%
-[99, 300] loss: 0.084 | acc: 97.33%
-Epoch 99: 验证准确率: 90.43%
-[100, 100] loss: 0.083 | acc: 97.47%
-[100, 200] loss: 0.084 | acc: 97.43%
-[100, 300] loss: 0.085 | acc: 97.39%
-Epoch 100: 验证准确率: 90.59%
-训练完成
-最佳模型在测试集上的准确率: 90.60%
-\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{train2.png}
+    \caption{CNN训练预测示例}
+    \label{fig:cnn_validation_accuracy}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{train3.png}
+    \caption{CNN's Loss and Accuracy on Training and Validation Sets}
+    \label{fig:cnn_training_validation_loss_accuracy}
+\end{figure}
+
+
+
+
+
+
 
 \cleardoublepage
 
 
-\section{Summary}
+
+\section{Convolutional Neural Networks for CIFAR-10}
+
+\subsection{Overview of CNNs}
+
+Convolutional Neural Networks (CNNs) are specialized architectures tailored for processing grid-like data, such as images, by leveraging spatial hierarchies. Their efficacy in image recognition, particularly for datasets like CIFAR-10, stems from their ability to extract local features while maintaining computational efficiency \cite{cifar10}.
+
+\subsubsection{Limitations of Traditional Neural Networks}
+
+Traditional neural networks struggle with image data due to:
+
+\begin{enumerate}[label=\roman*.]
+    \item \textit{High Input Dimensionality}: A 1000$\times$1000 pixel color image requires 3,000,000 input neurons (1000 $\times$ 1000 $\times$ 3 for RGB channels), posing significant computational challenges.
+    \item \textit{Parameter Overload}: Connecting these to a 1000-neuron hidden layer demands 3,000,000,000 weights, complicating training and storage.
+    \item \textit{Loss of Spatial Context}: Flattening images into vectors discards pixel relationships critical for recognizing patterns like edges or textures.
+    \item \textit{Lack of Translation Invariance}: Object shifts in images can disrupt recognition, as these networks rely on fixed pixel patterns.
+\end{enumerate}
+
+\subsubsection{Advantages of CNNs}
+
+CNNs overcome these issues through:
+
+\begin{enumerate}[label=\roman*.]
+    \item \textit{Local Receptive Fields}: Neurons connect to small input regions (e.g., 3$\times$3 patches), reducing parameters.
+    \item \textit{Parameter Sharing}: Filters with fixed weights slide across the image, minimizing parameters and ensuring features like edges are detected universally.
+    \item \textit{Spatial Downsampling}: Pooling layers (e.g., max pooling) summarize regions, lowering dimensions and enhancing robustness to minor translations.
+\end{enumerate}
+
+\subsection{CNN Architecture}
+
+A typical CNN stacks convolutional blocks to extract hierarchical features, structured as follows:
+
+\begin{enumerate}[label=\roman*.]
+    \item \textit{Input Layer}: Receives raw image data (e.g., 32$\times$32$\times$3 for CIFAR-10).
+    \item \textit{Convolutional Layer}: Applies filters to produce feature maps via:
+        \[
+        S(i, j) = \sum_{m} \sum_{n} I(i + m, j + n) K(m, n),
+        \]
+        where $I$ is the input, $K$ is the filter, and $S$ is the feature map.
+    \item \textit{Activation Layer}: Introduces non-linearity with ReLU, $f(x) = \max(0, x)$, enabling complex pattern learning \cite{relu}.
+    \item \textit{Pooling Layer}: Reduces dimensions, e.g., max pooling selects the maximum value in a 2$\times$2 region.
+    \item \textit{Stacked Blocks}: Early layers detect edges, intermediate layers capture textures, and deeper layers identify objects.
+    \item \textit{Flatten Layer}: Converts feature maps into a vector.
+    \item \textit{Fully Connected Layers}: Combine features for classification.
+    \item \textit{Output Layer}: Uses Softmax to produce class probabilities.
+\end{enumerate}
+
+\subsection{Implementation on CIFAR-10}
+
+The CIFAR-10 dataset, comprising 50,000 training and 10,000 test images across 10 classes, serves as a robust testbed \cite{cifar10}.
+
+\subsubsection{Data Preprocessing}
+
+To enhance generalization:
+
+\begin{itemize}
+    \item \textit{Augmentation}: Random cropping and horizontal flipping diversify training data.
+    \item \textit{Normalization}: Images are standardized using CIFAR-10’s mean and standard deviation.
+    \item \textit{Dataset Split}: 80\% training, 20\% validation, sampled via \texttt{SubsetRandomSampler}.
+    \item \textit{Batch Size}: Set to 128 for efficient training.
+\end{itemize}
+
+\subsubsection{Model Design}
+
+The CNN features three convolutional blocks:
+
+\begin{itemize}
+    \item \textit{Structure}: Each block has two 3$\times$3 convolutional layers, batch normalization \cite{batchnorm}, ReLU, and max pooling.
+    \item \textit{Channels}: Increase from 64 to 128 to 256, capturing complex features.
+    \item \textit{Spatial Reduction}: Image size reduces from 32$\times$32 to 4$\times$4.
+    \item \textit{Output}: A 4$\times$4$\times$256 feature map flattens to 4096 dimensions, followed by fully connected layers with 0.5 dropout \cite{dropout}.
+\end{itemize}
+
+\begin{table}[h]
+\centering
+\caption{CNN Architecture}
+\begin{tabular}{l c c c}
+\toprule
+\textbf{Layer} & \textbf{Output Shape} & \textbf{Parameters} & \textbf{Operation} \\
+\midrule
+Conv Block 1 & 32$\times$32$\times$64 & 3$\times$3 filters, BN, ReLU & Convolution + Pooling \\
+Conv Block 2 & 16$\times$16$\times$128 & 3$\times$3 filters, BN, ReLU & Convolution + Pooling \\
+Conv Block 3 & 8$\times$8$\times$256 & 3$\times$3 filters, BN, ReLU & Convolution + Pooling \\
+Flatten & 4096 & -- & Reshape \\
+Fully Connected & 10 & Dropout (0.5) & Classification \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Training Strategy}
+
+Training over 100 epochs utilized:
+
+\begin{itemize}
+    \item \textit{Optimizer}: SGD with momentum for faster convergence.
+    \item \textit{Regularization}: Weight decay ($5 \times 10^{-4}$) to curb overfitting.
+    \item \textit{Scheduler}: Reduces learning rate by 10 if validation loss stalls for 5 epochs.
+\end{itemize}
+
+\subsubsection{Training Workflow}
+
+Each epoch involved:
+
+\begin{itemize}
+    \item \textit{Monitoring}: Logging loss and accuracy every 100 batches.
+    \item \textit{Validation}: Evaluating performance post-epoch to adjust the learning rate.
+    \item \textit{Model Saving}: Retaining the best-performing model based on validation accuracy.
+\end{itemize}
+
+\subsubsection{Evaluation}
+
+The model achieved $\sim$90\% test accuracy, with correct classifications of diverse images (e.g., distinguishing cats from dogs).
+
+\subsection{Performance Analysis}
+
+By the 40th epoch, training accuracy exceeded 90\% with losses below 10\%, while validation accuracy reached $\sim$90\% with losses around 30\%. These metrics indicate robust learning, though validation performance suggests room for improvement.
+
+% \begin{figure}[h]
+% \centering
+% \begin{subfigure}{0.45\textwidth}
+%     \includegraphics[width=\textwidth]{training_loss.png}
+%     \caption{Training and validation loss.}
+% \end{subfigure}
+% \hfill
+% \begin{subfigure}{0.45\textwidth}
+%     \includegraphics[width=\textwidth]{training_accuracy.png}
+%     \caption{Training and validation accuracy.}
+% \end{subfigure}
+% \caption{Performance curves over 100 epochs.}
+% \end{figure}
+
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.6\textwidth]{classification_examples.png}
+% \caption{Examples of correctly classified CIFAR-10 images.}
+% \end{figure}
+
+\subsection{Discussion}
+
+The 90\% accuracy reflects effective use of CNNs, augmented by data preprocessing and regularization. Compared to state-of-the-art models like ResNet, which achieve over 95\% \cite{resnet}, this model is solid but could benefit from deeper architectures or advanced techniques like residual connections. Early stopping around the 40th epoch could optimize training efficiency.
+
+This implementation underscores CNNs’ power for image classification and provides a foundation for further exploration in computer vision tasks.
+
+\begin{thebibliography}{9}
+\bibitem{cifar10}
+A. Krizhevsky, ``Learning Multiple Layers of Features from Tiny Images,'' 2009.
+
+\bibitem{relu}
+V. Nair and G. E. Hinton, ``Rectified Linear Units Improve Restricted Boltzmann Machines,'' \textit{ICML}, 2010.
+
+\bibitem{batchnorm}
+S. Ioffe and C. Szegedy, ``Batch Normalization: Accelerating Deep Network Training,'' \textit{arXiv:1502.03167}, 2015.
+
+\bibitem{dropout}
+N. Srivastava et al., ``Dropout: A Simple Way to Prevent Neural Networks from Overfitting,'' \textit{JMLR}, vol. 15, 2014.
+
+\bibitem{resnet}
+K. He et al., ``Deep Residual Learning for Image Recognition,'' \textit{CVPR}, 2016.
+\end{thebibliography}
+
+
+
+
+
+
+\cleardoublepage
+
+
+\section{CIFAR-10 Image Classification with ResNet and Vision Transformer}
 
 \section*{Introduction}
 % Introducing the CIFAR-10 dataset and objectives
@@ -1365,6 +1140,13 @@ with torch.no_grad():
 print(f'Test Accuracy: {100 * correct / total}\%')
 \end{lstlisting}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{ResNet.png}
+    \caption{ResNet Architecture}
+    \label{fig:resnet_architecture}
+\end{figure}
+
 \subsection*{ViT Fine-Tuning}
 \begin{lstlisting}[language=Python]
 import torch
@@ -1418,6 +1200,21 @@ with torch.no_grad():
 print(f'Test Accuracy: {100 * correct / total}\%')
 \end{lstlisting}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{ViT1.png}
+    \caption{ViT Transformer}
+    \label{fig:vit_transformer}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{ViT2.png}
+    \caption{ViT Training}
+    \label{fig:vit_training}
+\end{figure}
+
+
 \section*{Conclusion}
 % Summarizing findings
 ResNet-110 excels in training from scratch on CIFAR-10 (93.57\% accuracy, low computational cost). Pretrained ViT models, especially ViT-H/14 fine-tuned from JFT-300M (99.50\%), outperform ResNet (BiT-L, 99.37\%). Model choice depends on data scale and resources: ResNet suits limited data/resources, while ViT excels with large-scale pretraining. Code implementations are provided for reproducibility.
@@ -1455,48 +1252,48 @@ PyTorch Forum, ``ResNet with CIFAR10 only reaches 86\% accuracy,'' \url{https://
 
 
 % 附录 A
-\chapter*{附录 A. 中英文对照表}\addcontentsline{toc}{chapter}{附录 A. 中英文对照表}   
-\thispagestyle{plain} 
-\setcounter{section}{0}   
-\renewcommand\thesection{A.\arabic{section}}   
-\renewcommand{\thefigure}{A.\arabic{figure}} 
-\renewcommand{\thetable}{A.\arabic{table}}
+% \chapter*{附录 A. 中英文对照表}\addcontentsline{toc}{chapter}{附录 A. 中英文对照表}   
+% \thispagestyle{plain} 
+% \setcounter{section}{0}   
+% \renewcommand\thesection{A.\arabic{section}}   
+% \renewcommand{\thefigure}{A.\arabic{figure}} 
+% \renewcommand{\thetable}{A.\arabic{table}}
 
-\section{中英文对照表}
-\begin{multicols}{2}  
+% \section{中英文对照表}
+% \begin{multicols}{2}  
 
-\begin{table}[H]
-\centering
-\caption{\textbf{中英文对照表}}
-\begin{tabular}{ll}
-\toprule
-英文 & 中文 \\
-\midrule
-Bayes classification & 贝叶斯分类 \\
-decision rule & 决策规则 \\
-minimum error rate & 最小错误率 \\
-minimum risk & 最小风险 \\
-rejection option & 拒识选项 \\
-Gaussian distribution & 高斯分布 \\
-covariance matrix & 协方差矩阵 \\
-discriminant function & 判别函数 \\
-decision boundary & 决策边界 \\
-Hidden Markov Model & 隐马尔可夫模型 \\
-hidden state & 隐状态 \\
-observation sequence & 观测序列 \\
-maximum likelihood estimation & 最大似然估计 \\
-Bayesian estimation & 贝叶斯估计 \\
-k-Nearest Neighbor & k近邻 \\
-Parzen window & Parzen窗 \\
-linear discriminant & 线性判别 \\
-quadratic discriminant & 二次判别 \\
-prior probability & 先验概率 \\
-posterior probability & 后验概率 \\
-\bottomrule
-\end{tabular}
-\end{table}
+% \begin{table}[H]
+% \centering
+% \caption{\textbf{中英文对照表}}
+% \begin{tabular}{ll}
+% \toprule
+% 英文 & 中文 \\
+% \midrule
+% Bayes classification & 贝叶斯分类 \\
+% decision rule & 决策规则 \\
+% minimum error rate & 最小错误率 \\
+% minimum risk & 最小风险 \\
+% rejection option & 拒识选项 \\
+% Gaussian distribution & 高斯分布 \\
+% covariance matrix & 协方差矩阵 \\
+% discriminant function & 判别函数 \\
+% decision boundary & 决策边界 \\
+% Hidden Markov Model & 隐马尔可夫模型 \\
+% hidden state & 隐状态 \\
+% observation sequence & 观测序列 \\
+% maximum likelihood estimation & 最大似然估计 \\
+% Bayesian estimation & 贝叶斯估计 \\
+% k-Nearest Neighbor & k近邻 \\
+% Parzen window & Parzen窗 \\
+% linear discriminant & 线性判别 \\
+% quadratic discriminant & 二次判别 \\
+% prior probability & 先验概率 \\
+% posterior probability & 后验概率 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
 
-\end{multicols}
+% \end{multicols}
 
 
 
